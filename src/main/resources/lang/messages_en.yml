@@ -2,6 +2,7 @@ dungeon:
   enter: "&aYou have entered a dungeon!"
   complete: "&6Dungeon complete! You earned &e%gold% coins."
   fail: "&cDungeon failed! You lost &e%gold% coins."
+  selection_cancelled: "&cDungeon selection cancelled."
 party:
   created: "&aYou have created a party!"
   joined: "&aYou have joined %leader%'s party!"

@@ -11,8 +11,14 @@ import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,12 +32,68 @@ public class DungeonManager implements Listener {
     private final HashMap<UUID, String> playerDungeons = new HashMap<>();
     private final HashSet<String> activeDungeons = new HashSet<>();
     private final Random random = new Random();
+    private final HashSet<UUID> selectingDifficulty = new HashSet<>();
 
     public DungeonManager(DungeonLobby plugin, LanguageManager languageManager) {
         this.plugin = plugin;
         this.languageManager = languageManager;
         this.trapManager = new TrapManager(languageManager);
         Bukkit.getPluginManager().registerEvents(this, plugin);
+    }
+
+    public void openDifficultySelection(Player player) {
+        selectingDifficulty.add(player.getUniqueId());
+        Inventory gui = Bukkit.createInventory(null, 9, "Select Difficulty");
+
+        gui.setItem(2, createGuiItem(Material.GREEN_WOOL, "difficulty.easy"));
+        gui.setItem(4, createGuiItem(Material.YELLOW_WOOL, "difficulty.medium"));
+        gui.setItem(6, createGuiItem(Material.RED_WOOL, "difficulty.hard"));
+        gui.setItem(8, createGuiItem(Material.PURPLE_WOOL, "difficulty.epic"));
+
+        player.openInventory(gui);
+    }
+
+    private ItemStack createGuiItem(Material material, String messageKey) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(languageManager.getMessage(null, messageKey));
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getView().getTitle().equals("Select Difficulty")) {
+            event.setCancelled(true);
+            Player player = (Player) event.getWhoClicked();
+            selectingDifficulty.remove(player.getUniqueId());
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null || !clickedItem.hasItemMeta()) return;
+
+            String difficulty = clickedItem.getItemMeta().getDisplayName().toLowerCase();
+            String dungeonId = createDungeonInstance(player, difficulty);
+            teleportPlayerToDungeon(player, dungeonId);
+            player.closeInventory();
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+        if (selectingDifficulty.contains(player.getUniqueId())) {
+            selectingDifficulty.remove(player.getUniqueId());
+            languageManager.sendMessage(player, "dungeon.selection_cancelled");
+        }
+    }
+
+    @EventHandler
+    public void onPortalUse(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.END_PORTAL_FRAME) {
+            openDifficultySelection(player);
+        }
     }
 
     public String createDungeonInstance(Player player, String difficulty) {
@@ -74,6 +136,7 @@ public class DungeonManager implements Listener {
             case "epic": return 90;
             case "hard": return 50;
             case "medium": return 20;
+            case "easy": return 10;
             default: return 10;
         }
     }
@@ -92,6 +155,7 @@ public class DungeonManager implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        selectingDifficulty.remove(player.getUniqueId());
         onPlayerLeaveDungeon(player);
     }
 
