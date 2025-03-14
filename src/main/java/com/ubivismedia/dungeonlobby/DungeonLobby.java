@@ -24,7 +24,7 @@ public class DungeonLobby extends JavaPlugin {
         getCommand("party").setExecutor(partyManager);
 
         // Initialize Dungeon Manager
-        dungeonManager = new DungeonManager(this);
+        dungeonManager = new DungeonManager(this, languageManager);
 
         // Register Portal Listener
         getServer().getPluginManager().registerEvents(new PortalListener(dungeonManager, partyManager), this);
