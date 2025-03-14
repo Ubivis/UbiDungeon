@@ -33,7 +33,7 @@ public class PortalListener implements Listener {
 
         if (blockType == PORTAL_BLOCK) {
             List<Player> partyMembers = partyManager.getPartyMembers(player);
-            String dungeonId = dungeonManager.createDungeonInstance(player);
+            String dungeonId = dungeonManager.createDungeonInstance(player, "mittel");
 
             for (Player member : partyMembers) {
                 dungeonManager.teleportPlayerToDungeon(member, dungeonId);
