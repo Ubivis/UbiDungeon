@@ -1,18 +1,41 @@
 package com.ubivismedia.dungeonlobby;
 
+import com.ubivismedia.dungeonlobby.party.PartyManager;
+import com.ubivismedia.dungeonlobby.localization.LanguageManager;
+import com.ubivismedia.dungeonlobby.dungeon.DungeonManager;
+import com.ubivismedia.dungeonlobby.portal.PortalListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class DungeonLobby extends JavaPlugin {
 
+    private PartyManager partyManager;
+    private LanguageManager languageManager;
+    private DungeonManager dungeonManager;
+
     @Override
     public void onEnable() {
         getLogger().info("DungeonLobby Plugin enabled!");
-        // Register event listeners, commands, and managers here
+
+        // Initialize Language Manager
+        languageManager = new LanguageManager(this);
+
+        // Initialize Party Manager
+        partyManager = new PartyManager(languageManager);
+        getCommand("party").setExecutor(partyManager);
+
+        // Initialize Dungeon Manager
+        dungeonManager = new DungeonManager(this);
+
+        // Register Portal Listener
+        getServer().getPluginManager().registerEvents(new PortalListener(dungeonManager, partyManager), this);
     }
 
     @Override
     public void onDisable() {
         getLogger().info("DungeonLobby Plugin disabled!");
-        // Cleanup resources, save data if necessary
+    }
+
+    public LanguageManager getLanguageManager() {
+        return languageManager;
     }
 }

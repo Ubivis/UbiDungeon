@@ -1,8 +1,21 @@
 name: DungeonLobby
 main: com.ubivismedia.dungeonlobby.DungeonLobby
 version: 1.0
-api-version: 1.24
+api-version: 1.21
 depend: [Vault]
 softdepend: [PlaceholderAPI]
-description: A dynamic dungeon generator plugin with economy and leaderboard features.
+description: A dynamic dungeon generator plugin with economy, parties, and leaderboards.
 authors: [Ubivismedia]
+
+commands:
+  party:
+    description: Manage your party.
+    usage: /party <create|invite|leave>
+    aliases: [p]
+    permission: dungeonlobby.party
+    permission-message: You do not have permission to use this command.
+
+permissions:
+  dungeonlobby.party:
+    description: Allows players to use party commands.
+    default: true
