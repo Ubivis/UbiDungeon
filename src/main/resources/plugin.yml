@@ -1,0 +1,8 @@
+name: DungeonLobby
+main: com.ubivismedia.dungeonlobby.DungeonLobby
+version: 1.0
+api-version: 1.24
+depend: [Vault]
+softdepend: [PlaceholderAPI]
+description: A dynamic dungeon generator plugin with economy and leaderboard features.
+authors: [Ubivismedia]
