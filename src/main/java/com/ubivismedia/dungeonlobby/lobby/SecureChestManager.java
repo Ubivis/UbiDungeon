@@ -53,6 +53,7 @@ public class SecureChestManager implements Listener {
 
         Player player = event.getPlayer();
         UUID chestOwner = secureChests.get(block.getLocation());
+        String playerLocale = player.getLocale(); // Holt die Client-Sprache des Spielers
 
         if (chestOwner == null) {
             // Falls die Kiste noch keinem Spieler gehört, wird sie beim ersten Öffnen registriert
