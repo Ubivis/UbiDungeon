@@ -1,0 +1,22 @@
+dungeon:
+  enter: "&a你进入了一个地牢！"
+  complete: "&6地牢完成！你获得了&e%gold%金币。"
+  fail: "&c地牢失败！你失去了&e%gold%金币。"
+  selection_cancelled: "&c地牢选择已取消。"
+  cancel: "&c取消"
+party:
+  created: "&a你创建了一个队伍！"
+  joined: "&a你加入了 %leader% 的队伍！"
+  left: "&c你离开了队伍！"
+trap:
+  spear: "&c一支长矛陷阱击中了你！"
+  fire: "&c你踩到了火焰！"
+  poison: "&2毒陷阱削弱了你！"
+chest:
+  ownership_set: "&a这个箱子现在是你的个人储物箱。"
+  access_denied: "&c这是一个私人箱子，你无法打开它！"
+difficulty:
+  easy: "简单"
+  medium: "中等"
+  hard: "困难"
+  epic: "史诗"

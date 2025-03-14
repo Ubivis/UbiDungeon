@@ -1,0 +1,22 @@
+dungeon:
+  enter: "&aDu hast einen Dungeon betreten!"
+  complete: "&6Dungeon abgeschlossen! Du hast &e%gold% Münzen erhalten."
+  fail: "&cDungeon fehlgeschlagen! Du hast &e%gold% Münzen verloren."
+  selection_cancelled: "&cDungeon-Auswahl abgebrochen."
+  cancel: "&cAbbrechen"
+party:
+  created: "&aDu hast eine Gruppe erstellt!"
+  joined: "&aDu bist %leader%s Gruppe beigetreten!"
+  left: "&cDu hast die Gruppe verlassen!"
+trap:
+  spear: "&cEine Speerfalle hat dich getroffen!"
+  fire: "&cDu bist ins Feuer getreten!"
+  poison: "&2Eine Giftfalle hat dich geschwächt!"
+chest:
+  ownership_set: "&aDiese Kiste ist jetzt dein persönliches Lager."
+  access_denied: "&cDies ist eine private Kiste, du kannst sie nicht öffnen!"
+difficulty:
+  easy: "Einfach"
+  medium: "Mittel"
+  hard: "Schwer"
+  epic: "Episch"

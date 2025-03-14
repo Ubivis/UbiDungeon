@@ -1,0 +1,22 @@
+dungeon:
+  enter: "&aHai entrato in un dungeon!"
+  complete: "&6Dungeon completato! Hai guadagnato &e%gold% monete."
+  fail: "&cDungeon fallito! Hai perso &e%gold% monete."
+  selection_cancelled: "&cSelezione del dungeon annullata."
+  cancel: "&cAnnulla"
+party:
+  created: "&aHai creato un party!"
+  joined: "&aSei entrato nel party di %leader%!"
+  left: "&cHai lasciato il party!"
+trap:
+  spear: "&cUna trappola con lance ti ha colpito!"
+  fire: "&cSei entrato nel fuoco!"
+  poison: "&2Una trappola velenosa ti ha indebolito!"
+chest:
+  ownership_set: "&aQuesta cassa è ora il tuo deposito personale."
+  access_denied: "&cQuesta è una cassa privata, non puoi aprirla!"
+difficulty:
+  easy: "Facile"
+  medium: "Medio"
+  hard: "Difficile"
+  epic: "Epico"
