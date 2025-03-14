@@ -3,6 +3,8 @@ package com.ubivismedia.dungeonlobby.dungeon;
 import com.ubivismedia.dungeonlobby.DungeonLobby;
 import com.ubivismedia.dungeonlobby.localization.LanguageManager;
 import com.ubivismedia.dungeonlobby.traps.TrapManager;
+import com.ubivismedia.dungeonlobby.core.DatabaseManager;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,20 +27,81 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.UUID;
 
-public class DungeonManager implements Listener {
+public class DungeonManager extends PlaceholderExpansion implements Listener {
     private final DungeonLobby plugin;
     private final LanguageManager languageManager;
     private final TrapManager trapManager;
+    private final DatabaseManager databaseManager;
     private final HashMap<UUID, String> playerDungeons = new HashMap<>();
     private final HashSet<String> activeDungeons = new HashSet<>();
     private final Random random = new Random();
     private final HashSet<UUID> selectingDifficulty = new HashSet<>();
+    private final HashMap<String, String> dungeonDifficulties = new HashMap<>();
 
-    public DungeonManager(DungeonLobby plugin, LanguageManager languageManager) {
+    public DungeonManager(DungeonLobby plugin, LanguageManager languageManager, DatabaseManager databaseManager) {
         this.plugin = plugin;
         this.languageManager = languageManager;
+        this.databaseManager = databaseManager;
         this.trapManager = new TrapManager(languageManager);
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            this.register();
+        }
+    }
+
+    @Override
+    public String getIdentifier() {
+        return "dungeonlobby";
+    }
+
+    @Override
+    public String getAuthor() {
+        return "UbiVisMedia";
+    }
+
+    @Override
+    public String getVersion() {
+        return plugin.getDescription().getVersion();
+    }
+
+    public boolean persist() {
+        return true;
+    }
+
+    public String onRequest(Player player, String identifier) {
+        if (identifier == null || identifier.isEmpty()) {
+            return null;
+        }
+
+        // Check if the request is for another player
+        if (identifier.contains("_")) {
+            String[] parts = identifier.split("_");
+            if (parts.length == 2) {
+                String targetName = parts[0];
+                String statType = parts[1];
+                Player target = Bukkit.getPlayerExact(targetName);
+                if (target != null) {
+                    return getStatValue(target, statType);
+                }
+            }
+        }
+
+        // Default: Request for the current player
+        return getStatValue(player, identifier);
+    }
+
+    private String getStatValue(Player player, String statType) {
+        if (player == null) {
+            return "";
+        }
+        switch (statType.toLowerCase()) {
+            case "dungeons_completed":
+                return String.valueOf(databaseManager.getCompletedDungeons(player.getUniqueId().toString()));
+            case "dungeons_failed":
+                return String.valueOf(databaseManager.getFailedDungeons(player.getUniqueId().toString()));
+            default:
+                return null;
+        }
     }
 
     public void openDifficultySelection(Player player) {
@@ -49,6 +112,7 @@ public class DungeonManager implements Listener {
         gui.setItem(4, createGuiItem(Material.YELLOW_WOOL, "difficulty.medium"));
         gui.setItem(6, createGuiItem(Material.RED_WOOL, "difficulty.hard"));
         gui.setItem(8, createGuiItem(Material.PURPLE_WOOL, "difficulty.epic"));
+        gui.setItem(0, createGuiItem(Material.BARRIER, "dungeon.cancel"));
 
         player.openInventory(gui);
     }
@@ -68,12 +132,18 @@ public class DungeonManager implements Listener {
         if (event.getView().getTitle().equals("Select Difficulty")) {
             event.setCancelled(true);
             Player player = (Player) event.getWhoClicked();
-            selectingDifficulty.remove(player.getUniqueId());
             ItemStack clickedItem = event.getCurrentItem();
             if (clickedItem == null || !clickedItem.hasItemMeta()) return;
 
-            String difficulty = clickedItem.getItemMeta().getDisplayName().toLowerCase();
-            String dungeonId = createDungeonInstance(player, difficulty);
+            String itemName = clickedItem.getItemMeta().getDisplayName();
+            if (itemName.equals(languageManager.getMessage(null, "dungeon.cancel"))) {
+                selectingDifficulty.remove(player.getUniqueId());
+                player.closeInventory();
+                languageManager.sendMessage(player, "dungeon.selection_cancelled");
+                return;
+            }
+
+            String difficulty = itemName.toLowerCase();            String dungeonId = createDungeonInstance(player, difficulty);
             teleportPlayerToDungeon(player, dungeonId);
             player.closeInventory();
         }
@@ -100,7 +170,8 @@ public class DungeonManager implements Listener {
         String dungeonId = "dungeon_" + player.getUniqueId();
         activeDungeons.add(dungeonId);
         playerDungeons.put(player.getUniqueId(), dungeonId);
-        plugin.getLogger().info("Dungeon instance created: " + dungeonId);
+        dungeonDifficulties.put(dungeonId, difficulty);
+        plugin.getLogger().info("Dungeon instance created: " + dungeonId + " (Difficulty: " + difficulty + ")");
 
         generateDungeon(dungeonId, difficulty);
 
@@ -148,7 +219,7 @@ public class DungeonManager implements Listener {
 
         String dungeonId = playerDungeons.get(player.getUniqueId());
         if (event.getFrom().getWorld().getName().equals(dungeonId)) {
-            onPlayerLeaveDungeon(player);
+            onPlayerLeaveDungeon(player, false);
         }
     }
 
@@ -156,14 +227,15 @@ public class DungeonManager implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         selectingDifficulty.remove(player.getUniqueId());
-        onPlayerLeaveDungeon(player);
+        onPlayerLeaveDungeon(player, true);
     }
 
-    public void onPlayerLeaveDungeon(Player player) {
+    public void onPlayerLeaveDungeon(Player player, boolean failed) {
         UUID playerId = player.getUniqueId();
         if (!playerDungeons.containsKey(playerId)) return;
 
         String dungeonId = playerDungeons.get(playerId);
+        String difficulty = dungeonDifficulties.getOrDefault(dungeonId, "unknown");
         World dungeonWorld = Bukkit.getWorld(dungeonId);
         if (dungeonWorld == null) return;
 
@@ -171,6 +243,8 @@ public class DungeonManager implements Listener {
         if (playersInDungeon <= 1) {
             removeDungeon(dungeonId);
         }
+
+        databaseManager.logDungeonRun(player.getUniqueId().toString(), dungeonId, difficulty, !failed);
     }
 
     private void removeDungeon(String dungeonId) {
@@ -178,6 +252,7 @@ public class DungeonManager implements Listener {
         if (dungeonWorld != null) {
             Bukkit.unloadWorld(dungeonWorld, false);
             activeDungeons.remove(dungeonId);
+            dungeonDifficulties.remove(dungeonId);
             plugin.getLogger().info("Dungeon instance removed: " + dungeonId);
         }
     }

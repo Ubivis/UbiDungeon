@@ -3,6 +3,7 @@ dungeon:
   complete: "&6Dungeon complete! You earned &e%gold% coins."
   fail: "&cDungeon failed! You lost &e%gold% coins."
   selection_cancelled: "&cDungeon selection cancelled."
+  cancel: "&cCancel"
 party:
   created: "&aYou have created a party!"
   joined: "&aYou have joined %leader%'s party!"
@@ -11,6 +12,9 @@ trap:
   spear: "&cA spear trap hit you!"
   fire: "&cYou stepped into fire!"
   poison: "&2A poison trap weakened you!"
+chest:
+  ownership_set: "&aThis chest is now your personal storage."
+  access_denied: "&cThis is a private chest and you cannot open it!"
 difficulty:
   easy: "Easy"
   medium: "Medium"

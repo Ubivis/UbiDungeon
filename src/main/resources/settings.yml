@@ -1,0 +1,6 @@
+database:
+  type: "sqlite"
+  host: "localhost"
+  database: "dungeonlobby"
+  user: "root"
+  password: ""

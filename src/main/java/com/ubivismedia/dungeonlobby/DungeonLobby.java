@@ -1,5 +1,6 @@
 package com.ubivismedia.dungeonlobby;
 
+import com.ubivismedia.dungeonlobby.core.DatabaseManager;
 import com.ubivismedia.dungeonlobby.party.PartyManager;
 import com.ubivismedia.dungeonlobby.localization.LanguageManager;
 import com.ubivismedia.dungeonlobby.dungeon.DungeonManager;
@@ -11,6 +12,7 @@ public class DungeonLobby extends JavaPlugin {
     private PartyManager partyManager;
     private LanguageManager languageManager;
     private DungeonManager dungeonManager;
+    private DatabaseManager databaseManager;
 
     @Override
     public void onEnable() {
@@ -24,7 +26,7 @@ public class DungeonLobby extends JavaPlugin {
         getCommand("party").setExecutor(partyManager);
 
         // Initialize Dungeon Manager
-        dungeonManager = new DungeonManager(this, languageManager);
+        dungeonManager = new DungeonManager(this, languageManager, databaseManager);
 
         // Register Portal Listener
         getServer().getPluginManager().registerEvents(new PortalListener(dungeonManager, partyManager), this);
