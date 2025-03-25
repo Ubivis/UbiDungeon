@@ -36,46 +36,6 @@ public class DungeonGenerator {
     }
     
     /**
-     * Find the room furthest from the entrance
-     */
-    private RoomPosition findFurthestRoom(DungeonLayout layout) {
-        int entranceX = layout.getEntranceX();
-        int entranceY = layout.getEntranceY();
-        int size = layout.getSize();
-        
-        RoomPosition furthest = null;
-        double maxDistance = 0;
-        
-        for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
-                if (layout.isRoom(x, y) && layout.getRoomType(x, y) == RoomType.NORMAL) {
-                    double distance = Math.sqrt(Math.pow(x - entranceX, 2) + Math.pow(y - entranceY, 2));
-                    
-                    if (distance > maxDistance) {
-                        maxDistance = distance;
-                        furthest = new RoomPosition(x, y);
-                    }
-                }
-            }
-        }
-        
-        return furthest;
-    }
-    
-    /**
-     * Helper class for room positions
-     */
-    private static class RoomPosition {
-        final int x;
-        final int y;
-        
-        RoomPosition(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
-}
-    /**
      * Generate a dungeon synchronously (called from main thread)
      */
     public DungeonLayout generateDungeon(BiomeArea area) {
@@ -191,3 +151,44 @@ public class DungeonGenerator {
             }
         }
     }
+    
+    /**
+     * Find the room furthest from the entrance
+     */
+    private RoomPosition findFurthestRoom(DungeonLayout layout) {
+        int entranceX = layout.getEntranceX();
+        int entranceY = layout.getEntranceY();
+        int size = layout.getSize();
+        
+        RoomPosition furthest = null;
+        double maxDistance = 0;
+        
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                if (layout.isRoom(x, y) && layout.getRoomType(x, y) == RoomType.NORMAL) {
+                    double distance = Math.sqrt(Math.pow(x - entranceX, 2) + Math.pow(y - entranceY, 2));
+                    
+                    if (distance > maxDistance) {
+                        maxDistance = distance;
+                        furthest = new RoomPosition(x, y);
+                    }
+                }
+            }
+        }
+        
+        return furthest;
+    }
+    
+    /**
+     * Helper class for room positions
+     */
+    private static class RoomPosition {
+        final int x;
+        final int y;
+        
+        RoomPosition(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+}
