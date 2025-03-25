@@ -1,11 +1,11 @@
-package com.yourdomain.aidungeon;
+package com.ubivismedia.aidungeon;
 
-import com.yourdomain.aidungeon.commands.DungeonCommand;
-import com.yourdomain.aidungeon.config.ConfigManager;
-import com.yourdomain.aidungeon.dungeons.BiomeTracker;
-import com.yourdomain.aidungeon.dungeons.DungeonManager;
-import com.yourdomain.aidungeon.listeners.PlayerMoveListener;
-import com.yourdomain.aidungeon.storage.DungeonStorage;
+import com.ubivismedia.aidungeon.commands.DungeonCommand;
+import com.ubivismedia.aidungeon.config.ConfigManager;
+import com.ubivismedia.aidungeon.dungeons.BiomeTracker;
+import com.ubivismedia.aidungeon.dungeons.DungeonManager;
+import com.ubivismedia.aidungeon.listeners.PlayerMoveListener;
+import com.ubivismedia.aidungeon.storage.DungeonStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
