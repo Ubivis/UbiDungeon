@@ -4,6 +4,7 @@ import com.ubivismedia.aidungeon.AIDungeonGenerator;
 import com.ubivismedia.aidungeon.dungeons.BiomeArea;
 import com.ubivismedia.aidungeon.dungeons.BiomeTracker;
 import com.ubivismedia.aidungeon.dungeons.DungeonManager;
+import com.ubivismedia.aidungeon.quests.QuestSystem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,11 +21,14 @@ public class PlayerMoveListener implements Listener {
     private final AIDungeonGenerator plugin;
     private final BiomeTracker biomeTracker;
     private final DungeonManager dungeonManager;
+    private final QuestSystem questSystem;
     
-    public PlayerMoveListener(AIDungeonGenerator plugin, BiomeTracker biomeTracker, DungeonManager dungeonManager) {
+    public PlayerMoveListener(AIDungeonGenerator plugin, BiomeTracker biomeTracker, 
+                             DungeonManager dungeonManager, QuestSystem questSystem) {
         this.plugin = plugin;
         this.biomeTracker = biomeTracker;
         this.dungeonManager = dungeonManager;
+        this.questSystem = questSystem;
     }
     
     @EventHandler
@@ -57,6 +61,13 @@ public class PlayerMoveListener implements Listener {
                     player.sendMessage("§7[Debug] Dungeon generation queued in " 
                             + newArea.getPrimaryBiome() + " at " 
                             + newArea.getCenterX() + "," + newArea.getCenterZ());
+                }
+            } else {
+                // Check if entering an existing dungeon
+                BiomeArea existingDungeon = dungeonManager.getDungeonAreaAtLocation(player.getLocation());
+                if (existingDungeon != null) {
+                    // Generate quest when entering a dungeon
+                    questSystem.generateQuestForPlayer(player, existingDungeon);
                 }
             }
         }
