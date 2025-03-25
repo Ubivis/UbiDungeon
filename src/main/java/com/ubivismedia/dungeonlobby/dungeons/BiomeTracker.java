@@ -2,7 +2,7 @@ package com.ubivismedia.aidungeon.dungeons;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.yourdomain.aidungeon.AIDungeonGenerator;
+import com.ubivismedia.aidungeon.AIDungeonGenerator;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
