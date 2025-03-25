@@ -1,6 +1,6 @@
-package com.yourdomain.aidungeon.dungeons;
+package com.ubivismedia.aidungeon.dungeons;
 
-import com.yourdomain.aidungeon.config.DungeonTheme;
+import com.ubivismedia.aidungeon.config.DungeonTheme;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
