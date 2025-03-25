@@ -30,7 +30,7 @@ dependencies {
     implementation 'org.yaml:snakeyaml:2.0'
     
     // PlaceholderAPI (soft dependency)
-    compileOnly 'me.clip:placeholderapi:2.11.3'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
     
     // For testing
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
