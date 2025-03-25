@@ -2,7 +2,7 @@ name: AIDungeonGenerator
 version: '${project.version}'
 main: com.ubivismedia.aidungeon.AIDungeonGenerator
 api-version: '1.19'
-authors: [YourName]
+authors: [UbivisMedia]
 description: An AI-powered dungeon generator for Minecraft
 commands:
   aidungeon:
@@ -10,10 +10,18 @@ commands:
     usage: /aidungeon [generate|info|reload]
     aliases: [aid, dungeon]
     permission: aidungeon.admin
+  quests:
+    description: Quest management commands
+    usage: /quests [list|claim|abandon]
+    aliases: [quest, q]
+    permission: aidungeon.quest
 permissions:
   aidungeon.admin:
     description: Allows administration of AI Dungeon Generator
     default: op
   aidungeon.discover:
     description: Allows players to discover dungeons
+    default: true
+  aidungeon.quest:
+    description: Allows players to use quest commands
     default: true
