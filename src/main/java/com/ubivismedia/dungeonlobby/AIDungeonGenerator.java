@@ -1,10 +1,14 @@
 package com.ubivismedia.aidungeon;
 
 import com.ubivismedia.aidungeon.commands.DungeonCommand;
+import com.ubivismedia.aidungeon.commands.QuestCommand;
 import com.ubivismedia.aidungeon.config.ConfigManager;
 import com.ubivismedia.aidungeon.dungeons.BiomeTracker;
 import com.ubivismedia.aidungeon.dungeons.DungeonManager;
+import com.ubivismedia.aidungeon.handlers.MobHandler;
+import com.ubivismedia.aidungeon.handlers.TrapHandler;
 import com.ubivismedia.aidungeon.listeners.PlayerMoveListener;
+import com.ubivismedia.aidungeon.quests.QuestSystem;
 import com.ubivismedia.aidungeon.storage.DungeonStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +21,7 @@ public class AIDungeonGenerator extends JavaPlugin {
     private DungeonManager dungeonManager;
     private BiomeTracker biomeTracker;
     private DungeonStorage dungeonStorage;
+    private QuestSystem questSystem;
     
     @Override
     public void onEnable() {
@@ -37,13 +42,18 @@ public class AIDungeonGenerator extends JavaPlugin {
         TrapHandler trapHandler = new TrapHandler(this);
         MobHandler mobHandler = new MobHandler(this);
         
+        // Initialize quest system
+        questSystem = new QuestSystem(this);
+        
         // Register commands
         getCommand("aidungeon").setExecutor(new DungeonCommand(this, dungeonManager));
+        getCommand("quests").setExecutor(new QuestCommand(this, questSystem));
         
         // Register listeners
-        Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(this, biomeTracker, dungeonManager), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(this, biomeTracker, dungeonManager, questSystem), this);
         Bukkit.getPluginManager().registerEvents(trapHandler, this);
         Bukkit.getPluginManager().registerEvents(mobHandler, this);
+        Bukkit.getPluginManager().registerEvents(questSystem, this);
         
         // Load existing dungeons
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
@@ -63,6 +73,11 @@ public class AIDungeonGenerator extends JavaPlugin {
         // Save any pending dungeon data
         if (dungeonStorage != null) {
             dungeonStorage.saveAllDungeons();
+        }
+        
+        // Save quest data
+        if (questSystem != null) {
+            questSystem.savePlayerQuests();
         }
         
         // Cancel any pending tasks
@@ -85,6 +100,10 @@ public class AIDungeonGenerator extends JavaPlugin {
     
     public DungeonStorage getDungeonStorage() {
         return dungeonStorage;
+    }
+    
+    public QuestSystem getQuestSystem() {
+        return questSystem;
     }
     
     /**
