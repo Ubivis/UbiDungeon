@@ -1,4 +1,4 @@
-package com.yourdomain.aidungeon.quests;
+package com.ubivismedia.aidungeon.quests;
 
 /**
  * Represents a quest assigned to a player
