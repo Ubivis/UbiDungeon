@@ -1,4 +1,4 @@
-package com.yourdomain.aidungeon.dungeons;
+package com.ubivismedia.aidungeon.dungeons;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
