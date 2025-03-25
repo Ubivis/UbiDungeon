@@ -1,4 +1,4 @@
-package com.yourdomain.aidungeon.dungeons;
+package com.ubivismedia.aidungeon.dungeons;
 
 /**
  * Enum representing different types of rooms in a dungeon
