@@ -1,21 +1,19 @@
-name: DungeonLobby
-main: com.ubivismedia.dungeonlobby.DungeonLobby
-version: 1.0
-api-version: 1.21
-depend: [Vault]
-softdepend: [PlaceholderAPI]
-description: A dynamic dungeon generator plugin with economy, parties, and leaderboards.
-authors: [Ubivismedia]
-
+name: AIDungeonGenerator
+version: '${project.version}'
+main: com.ubivismedia.aidungeon.AIDungeonGenerator
+api-version: '1.19'
+authors: [YourName]
+description: An AI-powered dungeon generator for Minecraft
 commands:
-  party:
-    description: Manage your party.
-    usage: /party <create|invite|leave>
-    aliases: [p]
-    permission: dungeonlobby.party
-    permission-message: You do not have permission to use this command.
-
+  aidungeon:
+    description: Main command for AI Dungeon Generator
+    usage: /aidungeon [generate|info|reload]
+    aliases: [aid, dungeon]
+    permission: aidungeon.admin
 permissions:
-  dungeonlobby.party:
-    description: Allows players to use party commands.
+  aidungeon.admin:
+    description: Allows administration of AI Dungeon Generator
+    default: op
+  aidungeon.discover:
+    description: Allows players to discover dungeons
     default: true
