@@ -323,4 +323,24 @@ public class DungeonManager {
     public int getActiveGenerations() {
         return activeGenerations.get();
     }
+
+        public BiomeArea getDungeonAreaAtLocation(Location location) {
+        // Get all dungeons
+        Map<BiomeArea, DungeonData> dungeons = getAllDungeons();
+        
+        for (BiomeArea area : dungeons.keySet()) {
+            if (area.getWorldName().equals(location.getWorld().getName())) {
+                double distance = Math.sqrt(
+                        Math.pow(area.getCenterX() - location.getBlockX(), 2) +
+                        Math.pow(area.getCenterZ() - location.getBlockZ(), 2)
+                );
+                
+                if (distance <= area.getRadius()) {
+                    return area;
+                }
+            }
+        }
+        
+        return null;
+    }
 }
