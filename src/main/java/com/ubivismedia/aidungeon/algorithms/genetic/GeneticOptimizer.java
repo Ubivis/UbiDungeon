@@ -633,7 +633,8 @@ public class GeneticOptimizer {
         /**
          * Create a clone of this individual
          */
-        Individual clone() {
+        @Override
+        protected Individual clone() {
             Individual clone = new Individual(size);
             clone.entranceX = this.entranceX;
             clone.entranceY = this.entranceY;
@@ -648,4 +649,5 @@ public class GeneticOptimizer {
             return clone;
         }
     }
+
 }

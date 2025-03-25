@@ -201,7 +201,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
             BiomeArea area = entry.getKey();
             DungeonData data = entry.getValue();
             
-            sender.sendMessage(ChatColor.YELLOW + (++count) + ". " + 
+            sender.sendMessage(ChatColor.YELLOW + "" + (++count) + ". " + 
                     ChatColor.WHITE + area.getWorldName() + " [" + 
                     area.getCenterX() + ", " + area.getCenterZ() + "] - " + 
                     ChatColor.AQUA + data.getTheme().getName());

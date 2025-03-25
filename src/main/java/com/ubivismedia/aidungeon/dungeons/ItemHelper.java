@@ -52,7 +52,7 @@ public class ItemHelper {
             // Add lore
             List<String> lore = new ArrayList<>();
             lore.add(ChatColor.GRAY + "Points to a dungeon in a");
-            lore.add(ChatColor.GRAY + area.getPrimaryBiome() + " biome");
+            lore.add(ChatColor.GRAY + area.getPrimaryBiome().toString() + " biome");
             lore.add("");
             lore.add(ChatColor.YELLOW + "Location: " + ChatColor.WHITE + 
                     area.getCenterX() + ", " + area.getCenterZ());

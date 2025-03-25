@@ -68,7 +68,7 @@ public class QuestSystem implements Listener {
     /**
      * Load quest templates from configuration
      */
-    private void loadQuestTemplates() {
+    public void loadQuestTemplates() {
         questTemplates.clear();
         
         // Check if quest configuration section exists

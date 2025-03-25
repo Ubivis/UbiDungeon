@@ -28,6 +28,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.rmi.server.Skeleton;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -488,7 +489,8 @@ public class MobHandler implements Listener {
         
         // Spawn the new mob
         Location loc = event.getLocation();
-        loc.getWorld().spawnEntity(loc, mobType, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        //loc.getWorld().spawnEntity(loc, mobType, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        loc.getWorld().spawnEntity(loc, mobType);
     }
     
     /**
