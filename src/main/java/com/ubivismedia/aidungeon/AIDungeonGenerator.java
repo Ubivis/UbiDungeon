@@ -65,6 +65,12 @@ public class AIDungeonGenerator extends JavaPlugin {
             }
         });
         
+        // Register PlaceholderAPI expansion if available
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            getLogger().info("Found PlaceholderAPI! Registering placeholders...");
+            new com.ubivismedia.aidungeon.integration.PlaceholderManager(this).register();
+        }
+        
         getLogger().info("AI Dungeon Generator has been enabled!");
     }
     

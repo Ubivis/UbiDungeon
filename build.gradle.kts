@@ -12,6 +12,8 @@ repositories {
     maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url 'https://jitpack.io' }
+    // PlaceholderAPI repository
+    maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
 }
 
 dependencies {
@@ -26,6 +28,9 @@ dependencies {
     
     // For configuration
     implementation 'org.yaml:snakeyaml:2.0'
+    
+    // PlaceholderAPI (soft dependency)
+    compileOnly 'me.clip:placeholderapi:2.11.3'
     
     // For testing
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
@@ -51,11 +56,12 @@ shadowJar {
     archiveClassifier.set('')
     dependencies {
         exclude(dependency('org.spigotmc:spigot-api'))
+        exclude(dependency('me.clip:placeholderapi'))
     }
-    relocate 'org.apache.commons', 'com.yourdomain.aidungeon.libs.commons'
-    relocate 'com.google.guava', 'com.yourdomain.aidungeon.libs.guava'
-    relocate 'com.github.benmanes.caffeine', 'com.yourdomain.aidungeon.libs.caffeine'
-    relocate 'org.yaml.snakeyaml', 'com.yourdomain.aidungeon.libs.snakeyaml'
+    relocate 'org.apache.commons', 'com.ubivismedia.aidungeon.libs.commons'
+    relocate 'com.google.guava', 'com.ubivismedia.aidungeon.libs.guava'
+    relocate 'com.github.benmanes.caffeine', 'com.ubivismedia.aidungeon.libs.caffeine'
+    relocate 'org.yaml.snakeyaml', 'com.ubivismedia.aidungeon.libs.snakeyaml'
 }
 
 tasks.withType(JavaCompile).configureEach {
