@@ -1,8 +1,8 @@
-package com.yourdomain.aidungeon.algorithms.cellular;
+package com.ubivismedia.aidungeon.algorithms.cellular;
 
-import com.yourdomain.aidungeon.AIDungeonGenerator;
-import com.yourdomain.aidungeon.dungeons.DungeonLayout;
-import com.yourdomain.aidungeon.dungeons.RoomType;
+import com.ubivismedia.aidungeon.AIDungeonGenerator;
+import com.ubivismedia.aidungeon.dungeons.DungeonLayout;
+import com.ubivismedia.aidungeon.dungeons.RoomType;
 
 import java.util.Random;
 
