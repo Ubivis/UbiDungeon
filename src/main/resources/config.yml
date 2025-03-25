@@ -391,3 +391,111 @@ rewards:
         - SHARPNESS:5
         - FIRE_ASPECT:2
       chance: 0.1
+
+# Quest System Configuration
+
+quests:
+  enabled: true
+  max_quests_per_player: 5
+  show_claimed: false
+  
+  # Quest Templates
+  templates:
+    boss_slayer:
+      name: Boss Slayer
+      description: Defeat the dungeon boss to claim your reward
+      type: KILL
+      required_amount: 1
+      target_entity: BOSS
+      reward_commands:
+        - give %player% diamond 5
+        - xp add %player% 500
+      reward_messages:
+        - You have defeated the dungeon boss!
+        - The cursed spirits can now rest.
+      reward_items:
+        - DIAMOND:5
+        - EXPERIENCE_BOTTLE:10
+        
+    treasure_hunter:
+      name: Treasure Hunter
+      description: Collect the lost artifacts scattered throughout the dungeon
+      type: COLLECT
+      required_amount: 3
+      target_item: EMERALD
+      reward_commands:
+        - give %player% gold_ingot 10
+        - xp add %player% 300
+      reward_messages:
+        - You have collected all the lost artifacts!
+        - Your archaeological skills are impressive.
+      reward_items:
+        - GOLD_INGOT:10
+        - ENCHANTED_BOOK:1
+        
+    dungeon_explorer:
+      name: Dungeon Explorer
+      description: Discover the hidden treasure chambers of the dungeon
+      type: EXPLORE
+      required_amount: 2
+      reward_commands:
+        - give %player% iron_ingot 15
+        - xp add %player% 200
+      reward_messages:
+        - You have explored the dungeon thoroughly!
+        - Your cartography skills are impressive.
+      reward_items:
+        - MAP:1
+        - COMPASS:1
+        - IRON_INGOT:15
+        
+    monster_hunter:
+      name: Monster Hunter
+      description: Cleanse the dungeon of its monstrous inhabitants
+      type: KILL
+      required_amount: 15
+      target_entity: ZOMBIE
+      reward_commands:
+        - give %player% experience_bottle 5
+        - xp add %player% 250
+      reward_messages:
+        - You have cleansed the dungeon of monsters!
+        - The dungeon is now safer thanks to your efforts.
+      reward_items:
+        - EXPERIENCE_BOTTLE:5
+        - GOLDEN_APPLE:2
+        
+    arcane_collector:
+      name: Arcane Collector
+      description: Collect magical essence crystals from the dungeon
+      type: COLLECT
+      required_amount: 5
+      target_item: AMETHYST_SHARD
+      reward_commands:
+        - give %player% glowstone 10
+        - xp add %player% 350
+      reward_messages:
+        - You have collected all the magical essence crystals!
+        - Your understanding of the arcane has increased.
+      reward_items:
+        - EXPERIENCE_BOTTLE:7
+        - ENCHANTED_BOOK:1
+        - GLOWSTONE:10
+        
+  # Biome-specific quests
+  biome_quests:
+    DESERT:
+      - boss_slayer
+      - treasure_hunter
+    FOREST:
+      - monster_hunter
+      - dungeon_explorer
+    MOUNTAINS:
+      - boss_slayer
+      - arcane_collector
+    OCEAN:
+      - treasure_hunter
+      - dungeon_explorer
+    default:
+      - monster_hunter
+      - boss_slayer
