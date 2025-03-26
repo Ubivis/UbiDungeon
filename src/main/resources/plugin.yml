@@ -1,5 +1,5 @@
 name: AIDungeonGenerator
-version: 'Alpha 0.0.5'
+version: '0.1.0 Alpha'
 main: com.ubivismedia.aidungeon.AIDungeonGenerator
 api-version: '1.19'
 authors: [UbivisMedia]
