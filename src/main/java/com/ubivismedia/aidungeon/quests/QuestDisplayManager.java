@@ -2,6 +2,7 @@ package com.ubivismedia.aidungeon.quests;
 
 import com.ubivismedia.aidungeon.AIDungeonGenerator;
 import com.ubivismedia.aidungeon.dungeons.BiomeArea;
+import com.ubivismedia.aidungeon.localization.LanguageManager;
 import com.ubivismedia.aidungeon.storage.DungeonData;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -42,6 +43,7 @@ public class QuestDisplayManager {
     public QuestDisplayManager(AIDungeonGenerator plugin, QuestSystem questSystem) {
         this.plugin = plugin;
         this.questSystem = questSystem;
+        LanguageManager lang = plugin.getLanguageManager();
 
         // Load configuration settings
         this.displayEnabled = plugin.getConfig().getBoolean("quests.display.enabled", true);
@@ -315,41 +317,37 @@ public class QuestDisplayManager {
      */
     public void showQuestDetails(Player player, Quest quest) {
         QuestTemplate template = quest.getTemplate();
+        LanguageManager lang = plugin.getLanguageManager();
 
         // Create a fancy quest detail message
         StringBuilder message = new StringBuilder();
 
         // Header
-        message.append(ChatColor.GOLD).append("✦ ").append(ChatColor.BOLD).append("QUEST DETAILS")
-                .append(ChatColor.GOLD).append(" ✦").append("\n");
+        message.append(lang.getMessage("quest.details.header", "✦", "QUEST DETAILS", "✦")).append("\n");
 
         // Quest name
-        message.append(ChatColor.YELLOW).append("Name: ").append(ChatColor.WHITE)
-                .append(template.getName()).append("\n");
+        message.append(lang.getMessage("quest.details.name", template.getName())).append("\n");
 
         // Description
-        message.append(ChatColor.YELLOW).append("Description: ").append(ChatColor.GRAY)
-                .append(template.getDescription()).append("\n");
+        message.append(lang.getMessage("quest.details.description", template.getDescription())).append("\n");
 
         // Type
-        message.append(ChatColor.YELLOW).append("Type: ").append(ChatColor.AQUA)
-                .append(formatQuestType(template.getType())).append("\n");
+        message.append(lang.getMessage("quest.details.type", formatQuestType(template.getType()))).append("\n");
 
         // Progress
-        String progressColor = quest.isCompleted() ? ChatColor.GREEN.toString() : ChatColor.GOLD.toString();
-        message.append(ChatColor.YELLOW).append("Progress: ").append(progressColor)
-                .append(quest.getProgress()).append("/").append(template.getRequiredAmount())
-                .append(" (").append(quest.getCompletionPercentage()).append("%)").append("\n");
+        String progressColor = quest.isCompleted() ? "§a" : "§6";
+        message.append(lang.getMessage("quest.details.progress",
+                progressColor,
+                quest.getProgress(),
+                template.getRequiredAmount(),
+                quest.getCompletionPercentage()
+        )).append("\n");
 
         // Status
         if (quest.isCompleted()) {
-            message.append(ChatColor.YELLOW).append("Status: ").append(ChatColor.GREEN)
-                    .append("✓ COMPLETED").append(ChatColor.YELLOW).append(" - Use ")
-                    .append(ChatColor.WHITE).append("/quests claim ").append(quest.getId())
-                    .append(ChatColor.YELLOW).append(" to claim rewards!");
+            message.append(lang.getMessage("quest.details.completed_status", quest.getId()));
         } else {
-            message.append(ChatColor.YELLOW).append("Status: ").append(ChatColor.GOLD)
-                    .append("⧗ IN PROGRESS");
+            message.append(lang.getMessage("quest.details.active_status"));
         }
 
         // Send message
@@ -362,114 +360,84 @@ public class QuestDisplayManager {
      /**
                 * Format the quest type into a more friendly string
      */
-    private String formatQuestType(QuestType type) {
-        switch (type) {
-            case KILL:
-                return "Combat";
-            case COLLECT:
-                return "Collection";
-            case EXPLORE:
-                return "Exploration";
-            default:
-                return type.name();
-        }
-    }
+     private String formatQuestType(QuestType type) {
+         return plugin.getLanguageManager().getMessage("quest.type." + type.name(), type.name());
+     }
     /**
      * Show quest notification as a title to a player
      */
     public void showQuestNotification(Player player, Quest quest, boolean isNew) {
-        // Skip if display is disabled
         if (!displayEnabled) {
             return;
         }
 
+        LanguageManager lang = plugin.getLanguageManager();
         QuestTemplate template = quest.getTemplate();
 
         if (isNew) {
-            // New quest notification
             player.sendTitle(
-                    ChatColor.GOLD + "New Quest",
-                    ChatColor.WHITE + template.getName(),
+                    lang.getMessage("quest.notification.new.title"),
+                    lang.getMessage("quest.notification.new.subtitle", template.getName()),
                     10, 40, 20
             );
-
-            // Play sound
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 1.0f);
         } else if (quest.isCompleted()) {
-            // Completed quest notification
             player.sendTitle(
-                    ChatColor.GREEN + "Quest Completed!",
-                    ChatColor.WHITE + template.getName(),
+                    lang.getMessage("quest.notification.completed.title"),
+                    lang.getMessage("quest.notification.completed.subtitle", template.getName()),
                     10, 50, 20
             );
-
-            // Play sound
             player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
         } else {
-            // Progress update notification
             player.sendTitle(
-                    ChatColor.GOLD + "Quest Progress",
-                    ChatColor.WHITE.toString() + quest.getProgress() + "/" + template.getRequiredAmount(),
+                    lang.getMessage("quest.notification.progress.title"),
+                    lang.getMessage("quest.notification.progress.subtitle", quest.getProgress(), template.getRequiredAmount()),
                     5, 30, 10
             );
-
-            // Play sound
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 1.0f);
         }
     }
 
-    /**
-     * Create a compass that points to quest objectives
-     * @param player The player to give the compass to
-     * @param quest The quest to track
-     */
     public void createQuestTracker(Player player, Quest quest) {
+        LanguageManager lang = plugin.getLanguageManager();
         QuestTemplate template = quest.getTemplate();
         QuestType type = template.getType();
 
-        // Get dungeon location
-        String dungeonId = quest.getDungeonId();
-        BiomeArea dungeonArea = getDungeonAreaFromId(dungeonId);
-
+        BiomeArea dungeonArea = getDungeonAreaFromId(quest.getDungeonId());
         if (dungeonArea == null) {
-            player.sendMessage(ChatColor.RED + "Could not find the dungeon for this quest.");
+            player.sendMessage(lang.getMessage("quest.tracker.dungeon_not_found"));
             return;
         }
 
-        // Create the compass item
         ItemStack compass = new ItemStack(Material.COMPASS);
         ItemMeta meta = compass.getItemMeta();
 
         if (meta != null) {
-            // Set compass name
-            meta.setDisplayName(ChatColor.GOLD + "Quest Tracker: " + ChatColor.WHITE + template.getName());
+            meta.setDisplayName(lang.getMessage("quest.tracker.name", template.getName()));
 
-            // Add lore
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GRAY + template.getDescription());
+            lore.add(lang.getMessage("quest.tracker.description", template.getDescription()));
             lore.add("");
-            lore.add(ChatColor.YELLOW + "Progress: " + ChatColor.WHITE +
-                    quest.getProgress() + "/" + template.getRequiredAmount() +
-                    " (" + quest.getCompletionPercentage() + "%)");
-            lore.add(ChatColor.YELLOW + "Type: " + ChatColor.AQUA + formatQuestType(type));
+            lore.add(lang.getMessage("quest.tracker.progress",
+                    quest.getProgress(),
+                    template.getRequiredAmount(),
+                    quest.getCompletionPercentage()
+            ));
+            lore.add(lang.getMessage("quest.tracker.type", formatQuestType(type)));
             lore.add("");
-            lore.add(ChatColor.GRAY + "This compass points to your quest objective");
+            lore.add(lang.getMessage("quest.tracker.hint"));
             meta.setLore(lore);
 
-            // Store quest ID in compass metadata
             NamespacedKey questKey = new NamespacedKey(plugin, "quest_tracker");
             meta.getPersistentDataContainer().set(questKey, PersistentDataType.STRING, quest.getId());
 
-            // Set compass to point to the dungeon
             if (meta instanceof CompassMeta) {
                 CompassMeta compassMeta = (CompassMeta) meta;
                 compassMeta.setLodestoneTracked(false);
 
-                // Get suitable Y level
                 int y = getSuitableY(Bukkit.getWorld(dungeonArea.getWorldName()),
                         dungeonArea.getCenterX(), dungeonArea.getCenterZ());
 
-                // Set lodestone location
                 Location targetLoc = new Location(
                         Bukkit.getWorld(dungeonArea.getWorldName()),
                         dungeonArea.getCenterX(),
@@ -479,13 +447,9 @@ public class QuestDisplayManager {
                 compassMeta.setLodestone(targetLoc);
             }
 
-            // Apply meta
             compass.setItemMeta(meta);
-
-            // Give to player
             player.getInventory().addItem(compass);
-            player.sendMessage(ChatColor.GREEN + "You received a Quest Tracker compass for: " +
-                    ChatColor.WHITE + template.getName());
+            player.sendMessage(lang.getMessage("quest.tracker.received", template.getName()));
         }
     }
 

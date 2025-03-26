@@ -5,6 +5,7 @@ api-version: '1.19'
 authors: [UbivisMedia]
 description: An AI-powered dungeon generator for Minecraft
 softdepend: [PlaceholderAPI]
+config-version: 1
 commands:
   aidungeon:
     description: Main command for AI Dungeon Generator

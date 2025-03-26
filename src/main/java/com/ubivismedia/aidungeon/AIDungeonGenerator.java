@@ -12,6 +12,7 @@ import com.ubivismedia.aidungeon.listeners.PlayerMoveListener;
 import com.ubivismedia.aidungeon.quests.QuestSystem;
 import com.ubivismedia.aidungeon.storage.DungeonStorage;
 import com.ubivismedia.aidungeon.api.AIDungeonAPI;
+import com.ubivismedia.aidungeon.localization.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,6 +27,7 @@ public class AIDungeonGenerator extends JavaPlugin {
     private QuestSystem questSystem;
     private BiomeExplorationTracker biomeExplorationTracker;
     private AIDungeonAPI api;
+    private LanguageManager languageManager;
 
     @Override
     public void onEnable() {
@@ -33,6 +35,7 @@ public class AIDungeonGenerator extends JavaPlugin {
         saveDefaultConfig();
         configManager = new ConfigManager(this);
         configManager.loadConfig();
+        this.languageManager = new LanguageManager(this);
         
         // Initialize storage
         dungeonStorage = new DungeonStorage(this);
@@ -128,6 +131,10 @@ public class AIDungeonGenerator extends JavaPlugin {
 
     public AIDungeonAPI getAPI() {
         return api;
+    }
+
+    public LanguageManager getLanguageManager() {
+        return languageManager;
     }
     
     /**

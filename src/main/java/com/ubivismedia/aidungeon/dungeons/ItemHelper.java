@@ -1,6 +1,7 @@
 package com.ubivismedia.aidungeon.dungeons;
 
 import com.ubivismedia.aidungeon.AIDungeonGenerator;
+import com.ubivismedia.aidungeon.localization.LanguageManager;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -64,6 +65,8 @@ public class ItemHelper {
         CompassMeta meta = (CompassMeta) compass.getItemMeta();
 
         if (meta != null) {
+
+            LanguageManager lang = plugin.getLanguageManager();
             // Set target location
             meta.setLodestoneTracked(false);
 
@@ -81,15 +84,12 @@ public class ItemHelper {
             }
 
             // Set display name
-            meta.setDisplayName(ChatColor.GOLD + "Dungeon Compass");
+            meta.setDisplayName(lang.getMessage("compass.name"));
 
             // Add lore
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GRAY + "Points to a dungeon in a");
-            lore.add(ChatColor.GRAY + area.getPrimaryBiome().toString() + " biome");
-            lore.add("");
-            lore.add(ChatColor.YELLOW + "Location: " + ChatColor.WHITE +
-                    area.getCenterX() + ", " + area.getCenterZ());
+            lore.add(lang.getMessage("compass.lore.0", area.getPrimaryBiome().toString()));
+            lore.add(lang.getMessage("compass.lore.1", area.getCenterX(), area.getCenterZ()));
             meta.setLore(lore);
 
             // Add persistent data

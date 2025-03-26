@@ -1,0 +1,65 @@
+# Dungeon Compass Messages
+compass:
+  name: "§6Dungeon Compass"
+  lore:
+    - "§7Points to a dungeon in a"
+    - "§7{0} biome"
+    - ""
+    - "§eLocation: §f{1}, {2}"
+
+# Quest Messages
+quest:
+  details:
+    header: "{0} {1} {2}"
+    name: "§6Name: §f{0}"
+    description: "§6Description: §7{0}"
+    type: "§6Type: §b{0}"
+    progress: "§6Progress: {0}{1}/{2} ({3}%)"
+    completed_status: "§6Status: §a✓ COMPLETED §7- Use /quests claim {0}"
+    active_status: "§6Status: §6⧗ IN PROGRESS"
+
+  notification:
+    new:
+      title: "§6New Quest"
+      subtitle: "§f{0}"
+    completed:
+      title: "§aQuest Completed!"
+      subtitle: "§f{0}"
+    progress:
+      title: "§6Quest Progress"
+      subtitle: "§f{0}/{1}"
+
+  tracker:
+    dungeon_not_found: "§cCould not find the dungeon for this quest."
+    name: "§6Quest Tracker: §f{0}"
+    description: "§7{0}"
+    progress: "§eProgress: §f{0}/{1} ({2}%)"
+    type: "§eType: §b{0}"
+    hint: "§7This compass points to your quest objective"
+    received: "§aYou received a Quest Tracker compass for: §f{0}"
+
+  quest:
+    type:
+      KILL: "Combat"
+      COLLECT: "Collection"
+      EXPLORE: "Exploration"
+
+  new: "§6New Quest: §f{0}"
+  progress: "§eQuest Progress: §f{0}"
+  completed: "§aQuest Completed: §f{0}"
+  claim_hint: "§eUse /quests claim {0} for rewards!"
+
+# Dungeon Discovery Messages
+dungeon:
+  discovered: "§6You have discovered a {0} dungeon!"
+  explore_hint: "§eExplore the area to find the entrance."
+
+# Error Messages
+error:
+  no_dungeons: "§cNo dungeons found."
+  quest_full: "§eYour quest log is full. Complete some quests first."
+  invalid_quest: "§cInvalid quest."
+
+# General Messages
+general:
+  reload: "§aConfiguration reloaded."

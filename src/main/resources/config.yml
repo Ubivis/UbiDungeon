@@ -3,6 +3,7 @@
 # General Settings
 settings:
   debug-mode: false
+  language: en
   dungeon-per-biome: true
   min-distance-between-dungeons: 1000
   world-blacklist:
