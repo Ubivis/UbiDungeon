@@ -571,7 +571,7 @@ themes:
     accent-blocks:
       - OAK_PLANKS
       - IRON_BARS
-      - FENCE
+      - OAK_FENCE
     floor-blocks:
       - COBBLESTONE
       - STONE_BRICKS
@@ -636,16 +636,16 @@ themes:
     primary-blocks:
       - PRISMARINE
       - PRISMARINE_BRICKS
-      - SMOOTH_PRISMARINE
+      - PRISMARINE
     accent-blocks:
       - SEA_LANTERN
-      - DEAD_CORAL_BLOCK
+      - DEAD_BUBBLE_CORAL_BLOCK
     floor-blocks:
       - PRISMARINE
-      - SMOOTH_PRISMARINE
+      - PRISMARINE
     ceiling-blocks:
       - PRISMARINE_BRICKS
-      - SMOOTH_PRISMARINE
+      - PRISMARINE
     light-blocks:
       - SEA_LANTERN
       - TORCH
