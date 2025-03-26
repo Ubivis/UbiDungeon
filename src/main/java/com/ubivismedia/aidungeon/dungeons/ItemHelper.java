@@ -134,6 +134,7 @@ public class ItemHelper {
     /**
      * Get the dungeon area from a compass
      */
+    @SuppressWarnings("unused")
     public static BiomeArea getDungeonAreaFromCompass(AIDungeonGenerator plugin, ItemStack compass) {
         if (!isDungeonCompass(plugin, compass)) {
             return null;
