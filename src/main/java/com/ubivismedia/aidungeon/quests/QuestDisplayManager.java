@@ -305,4 +305,69 @@ public class QuestDisplayManager {
 
         playerQuestBars.clear();
     }
+
+    /**
+     * Show quest details to a player with visual formatting
+     */
+    public void showQuestDetails(Player player, Quest quest) {
+        QuestTemplate template = quest.getTemplate();
+
+        // Create a fancy quest detail message
+        StringBuilder message = new StringBuilder();
+
+        // Header
+        message.append(ChatColor.GOLD).append("✦ ").append(ChatColor.BOLD).append("QUEST DETAILS")
+                .append(ChatColor.GOLD).append(" ✦").append("\n");
+
+        // Quest name
+        message.append(ChatColor.YELLOW).append("Name: ").append(ChatColor.WHITE)
+                .append(template.getName()).append("\n");
+
+        // Description
+        message.append(ChatColor.YELLOW).append("Description: ").append(ChatColor.GRAY)
+                .append(template.getDescription()).append("\n");
+
+        // Type
+        message.append(ChatColor.YELLOW).append("Type: ").append(ChatColor.AQUA)
+                .append(formatQuestType(template.getType())).append("\n");
+
+        // Progress
+        String progressColor = quest.isCompleted() ? ChatColor.GREEN.toString() : ChatColor.GOLD.toString();
+        message.append(ChatColor.YELLOW).append("Progress: ").append(progressColor)
+                .append(quest.getProgress()).append("/").append(template.getRequiredAmount())
+                .append(" (").append(quest.getCompletionPercentage()).append("%)").append("\n");
+
+        // Status
+        if (quest.isCompleted()) {
+            message.append(ChatColor.YELLOW).append("Status: ").append(ChatColor.GREEN)
+                    .append("✓ COMPLETED").append(ChatColor.YELLOW).append(" - Use ")
+                    .append(ChatColor.WHITE).append("/quests claim ").append(quest.getId())
+                    .append(ChatColor.YELLOW).append(" to claim rewards!");
+        } else {
+            message.append(ChatColor.YELLOW).append("Status: ").append(ChatColor.GOLD)
+                    .append("⧗ IN PROGRESS");
+        }
+
+        // Send message
+        player.sendMessage(message.toString());
+
+        // Play sound
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 0.5f, 1.0f);
+    }
+
+     /**
+                * Format the quest type into a more friendly string
+     */
+    private String formatQuestType(QuestType type) {
+        switch (type) {
+            case KILL:
+                return "Combat";
+            case COLLECT:
+                return "Collection";
+            case EXPLORE:
+                return "Exploration";
+            default:
+                return type.name();
+        }
+    }
 }
