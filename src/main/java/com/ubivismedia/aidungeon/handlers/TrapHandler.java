@@ -4,10 +4,7 @@ import com.ubivismedia.aidungeon.AIDungeonGenerator;
 import com.ubivismedia.aidungeon.dungeons.BiomeArea;
 import com.ubivismedia.aidungeon.dungeons.DungeonManager;
 import com.ubivismedia.aidungeon.storage.DungeonData;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -21,6 +18,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.bukkit.entity.Warden;
+import org.bukkit.entity.EntityType;
+import org.bukkit.block.data.BlockData;
+import java.lang.reflect.Method;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,7 +51,9 @@ public class TrapHandler implements Listener {
         CAVE_IN,
         FLAME_JET,
         TELEPORTER,
-        FREEZING
+        FREEZING,
+        WARDEN_SUMMON,
+        SCULK_SHRIEKER
     }
     
     public TrapHandler(AIDungeonGenerator plugin) {
@@ -200,6 +205,134 @@ public class TrapHandler implements Listener {
         // Trigger the trap
         triggerTrap(player, location, trapType);
     }
+
+    /**
+     * Trigger a warden summon trap
+     */
+    private void triggerWardenSummonTrap(Player player, Location location) {
+        // Get config values
+        double summonChance = plugin.getConfig().getDouble("traps.types.WARDEN_SUMMON.summon_chance", 0.7);
+        int warningSounds = plugin.getConfig().getInt("traps.types.WARDEN_SUMMON.warning_sounds", 3);
+        int despawnTime = plugin.getConfig().getInt("traps.types.WARDEN_SUMMON.despawn_time", 120);
+
+        // Play warning sounds and particles first
+        for (int i = 0; i < warningSounds; i++) {
+            int delay = i * 20; // 1 second between warnings
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                // Play sculk sensor activation sound
+                location.getWorld().playSound(location, Sound.BLOCK_SCULK_SENSOR_CLICKING, 1.0f, 0.5f);
+
+                // Play particles
+                location.getWorld().spawnParticle(Particle.SCULK_CHARGE, location, 15, 1.0, 0.5, 1.0, 0);
+
+                // Alert nearby players
+                for (Player nearby : location.getWorld().getPlayers()) {
+                    if (nearby.getLocation().distance(location) <= 15) {
+                        nearby.sendMessage(ChatColor.DARK_PURPLE + "You hear an unsettling noise from the depths...");
+                    }
+                }
+            }, delay);
+        }
+
+        // After all warnings, potentially summon the Warden
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            // Random chance to actually summon
+            if (random.nextDouble() < summonChance) {
+                // Spawn the Warden
+                Warden warden = (Warden) location.getWorld().spawnEntity(location, EntityType.WARDEN);
+
+                // Make the Warden angry at the player
+                warden.setTarget(player);
+
+                // Mark entity as a dungeon mob
+                PersistentDataContainer container = warden.getPersistentDataContainer();
+                container.set(new NamespacedKey(plugin, "dungeon_mob"), PersistentDataType.BYTE, (byte) 1);
+                container.set(new NamespacedKey(plugin, "dungeon_boss"), PersistentDataType.BYTE, (byte) 1);
+
+                // Send message to all nearby players
+                for (Player nearby : location.getWorld().getPlayers()) {
+                    if (nearby.getLocation().distance(location) <= 30) {
+                        nearby.sendMessage(ChatColor.DARK_RED + "The Warden has been summoned!");
+                    }
+                }
+
+                // Schedule despawn if desired
+                if (despawnTime > 0) {
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                        if (warden.isValid() && !warden.isDead()) {
+                            warden.remove();
+                        }
+                    }, despawnTime * 20L);
+                }
+            }
+        }, warningSounds * 20 + 40); // Extra 2 seconds after warnings
+
+        // Notification
+        player.sendMessage(ChatColor.DARK_PURPLE + "You've disturbed something ancient...");
+    }
+
+    /**
+     * Trigger a sculk shrieker trap
+     */
+    private void triggerSculkShriekerTrap(Player player, Location location) {
+        // Get config values
+        int shriekCount = plugin.getConfig().getInt("traps.types.SCULK_SHRIEKER.shriek_count", 3);
+        int radius = plugin.getConfig().getInt("traps.types.SCULK_SHRIEKER.radius", 5);
+        int cooldown = plugin.getConfig().getInt("traps.types.SCULK_SHRIEKER.cooldown", 10);
+
+        // Place a temporary sculk shrieker block
+        Block originalBlock = location.getBlock();
+        Material originalMaterial = originalBlock.getType();
+        BlockData originalData = originalBlock.getBlockData().clone();
+
+        // Save the block and replace with sculk shrieker
+        originalBlock.setType(Material.SCULK_SHRIEKER);
+
+        // Attempt to set the can_summon property if it's available (depends on Minecraft version)
+        BlockData shriekerData = originalBlock.getBlockData();
+        try {
+            // This uses reflection to avoid compile errors if the property isn't available
+            Method canSummonMethod = shriekerData.getClass().getMethod("setCanSummon", boolean.class);
+            canSummonMethod.invoke(shriekerData, true);
+            originalBlock.setBlockData(shriekerData);
+        } catch (Exception e) {
+            // Ignore if this property isn't available
+        }
+
+        // Schedule multiple shrieks
+        for (int i = 0; i < shriekCount; i++) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (originalBlock.getType() == Material.SCULK_SHRIEKER) {
+                    // Play sculk shrieker sound
+                    location.getWorld().playSound(location, Sound.BLOCK_SCULK_SHRIEKER_SHRIEK, 2.0f, 1.0f);
+
+                    // Display warning particles
+                    location.getWorld().spawnParticle(Particle.SCULK_SOUL, location, 20, 1.0, 1.0, 1.0, 0.1);
+
+                    // Get and warn all players in range
+                    for (Player nearby : location.getWorld().getPlayers()) {
+                        if (nearby.getLocation().distance(location) <= radius * 2) {
+                            nearby.sendMessage(ChatColor.DARK_PURPLE + "A sculk shrieker cries out!");
+                        }
+                    }
+                }
+            }, i * cooldown * 20L); // Convert cooldown to ticks
+        }
+
+        // Restore the original block after all shrieks
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (originalBlock.getType() == Material.SCULK_SHRIEKER) {
+                originalBlock.setType(originalMaterial);
+                originalBlock.setBlockData(originalData);
+            }
+        }, (shriekCount * cooldown + 2) * 20L); // Add 2 seconds after last shriek
+
+        // Apply darkness effect to player
+        player.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 200, 0)); // 10 seconds of darkness
+
+        // Notification
+        player.sendMessage(ChatColor.DARK_PURPLE + "You've activated a sculk shrieker!");
+    }
     
     /**
      * Trigger a hidden trap (subset of trap types that make sense for hidden traps)
@@ -242,6 +375,12 @@ public class TrapHandler implements Listener {
                 break;
             case FREEZING:
                 triggerFreezingTrap(player, location);
+                break;
+            case WARDEN_SUMMON:
+                triggerWardenSummonTrap(player, location);
+                break;
+            case SCULK_SHRIEKER:
+                triggerSculkShriekerTrap(player, location);
                 break;
         }
     }
