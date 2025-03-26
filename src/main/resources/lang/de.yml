@@ -1,0 +1,170 @@
+# Nachrichten des Dungeon-Kompasses
+compass:
+  name: "§6Dungeon-Kompass"
+  inventory_full: "§eDein Inventar war voll, daher wurde der Dungeon-Kompass vor deinen Füßen fallen gelassen."
+  lore:
+    biome: "§7Zeigt auf einen Dungeon in einem §f{0} Biom"
+    location: "§eOrt: §f{0}, {1}"
+
+# Quest-Nachrichten
+quest:
+  details:
+    header: "{0} {1} {2}"
+    name: "§6Name: §f{0}"
+    description: "§6Beschreibung: §7{0}"
+    type: "§6Typ: §b{0}"
+    progress: "§6Fortschritt: {0}{1}/{2} ({3}%)"
+    completed_status: "§6Status: §a✓ ABGESCHLOSSEN §7- Benutze /quests claim {0}"
+    active_status: "§6Status: §6⧗ IN BEARBEITUNG"
+    usage: "§cVerwendung: /quests details <quest_id>"
+    not_found: "§cQuest nicht gefunden."
+
+  notification:
+    new:
+      title: "§6Neue Quest"
+      subtitle: "§f{0}"
+    completed:
+      title: "§aQuest abgeschlossen!"
+      subtitle: "§f{0}"
+    progress:
+      title: "§6Quest-Fortschritt"
+      subtitle: "§f{0}/{1}"
+
+  tracker:
+    dungeon_not_found: "§cKonnte den Dungeon für diese Quest nicht finden."
+    name: "§6Quest-Tracker: §f{0}"
+    description: "§7{0}"
+    progress: "§eFortschritt: §f{0}/{1} ({2}%)"
+    type: "§eTyp: §b{0}"
+    hint: "§7Dieser Kompass zeigt auf dein Quest-Ziel"
+    received: "§aDu hast einen Quest-Tracker-Kompass für erhalten: §f{0}"
+
+  quest:
+    type:
+      KILL: "Kampf"
+      COLLECT: "Sammlung"
+      EXPLORE: "Erkundung"
+
+  status:
+    no_quests: "§eDu hast keine aktiven Quests."
+    header: "§6==== Deine Quests ===="
+    active_header: "§eAktive Quests:"
+    active_format: "§f - {0} §7({1}/{2}) §8{3}"
+    completed_header: "§aAbgeschlossene Quests (Belohnungen verfügbar):"
+    completed_format: "§f - {0} §a(ABGESCHLOSSEN) §7Benutze /quests claim {1}"
+    claimed_header: "§7Eingelöste Quests:"
+    claimed_format: "§7 - {0} (EINGELÖST)"
+
+  new: "§6Neue Quest: §f{0}"
+  progress: "§eQuest-Fortschritt: §f{0}"
+  completed: "§aQuest abgeschlossen: §f{0}"
+  claim_hint: "§eBenutze /quests claim {0} für Belohnungen!"
+
+  errors:
+    player_only: "§cDieser Befehl kann nur von Spielern verwendet werden."
+
+  claim:
+    usage: "§cVerwendung: /quests claim <quest_id>"
+
+  abandon:
+    usage: "§cVerwendung: /quests abandon <quest_id>"
+    success: "§eQuest abgebrochen."
+    not_found: "§cQuest nicht gefunden."
+
+  track:
+    usage: "§cVerwendung: /quests track <quest_id>"
+    not_found: "§cQuest nicht gefunden."
+
+  reload:
+    no_permission: "§cDu hast keine Berechtigung, Quests neu zu laden."
+    success: "§aQuest-System neu geladen."
+
+  help:
+    header: "§6==== Quest-Befehle ===="
+    list: "§e/quests §7- Zeige deine aktiven Quests"
+    details: "§e/quests details <id> §7- Zeige detaillierte Quest-Informationen"
+    track: "§e/quests track <id> §7- Erhalte einen Kompass, der diese Quest verfolgt"
+    claim: "§e/quests claim <id> §7- Fordere Belohnungen für eine abgeschlossene Quest ein"
+    abandon: "§e/quests abandon <id> §7- Brich eine Quest ab"
+
+# Nachrichten zur Dungeon-Entdeckung
+dungeon:
+  debug_generation: "§7[Debug] Dungeon-Generierung in {0} bei {1},{2} angestoßen (Erkundung: {3}%)"
+  discovered: "§6Du hast einen {0}-Dungeon entdeckt!"
+  explore_hint: "§eErkunde die Gegend, um den Eingang zu finden."
+
+  errors:
+    player_only: "§cDieser Befehl kann nur von Spielern verwendet werden."
+    no_permission: "§cDu hast keine Berechtigung, diesen Befehl zu verwenden."
+
+    help:
+      header: "§6=== AI-Dungeon-Generator-Befehle ==="
+      generate: "§e/aidungeon generate §f- Generiere einen Dungeon an deinem Standort"
+      info: "§e/aidungeon info §f- Zeige Informationen über nahegelegene Dungeons"
+      list: "§e/aidungeon list §f- Liste alle generierten Dungeons auf"
+      tp: "§e/aidungeon tp <id> §f- Teleportiere dich zu einem Dungeon nach ID"
+      reload: "§e/aidungeon reload §f- Lade die Plugin-Konfiguration neu"
+
+    generate:
+      exists: "§cEin Dungeon existiert bereits in diesem Bereich oder du befindest dich in einer schwarzen Liste Welt."
+      queued: "§aDungeon-Generierung in {0}-Biom angestoßen..."
+
+    info:
+      no_dungeons: "§eEs wurden noch keine Dungeons generiert."
+      nearby_header: "§6=== Nahegelegener Dungeon ==="
+      theme: "§eThema: §f{0}"
+      biome: "§eBiom: §f{0}"
+      location: "§eOrt: §fX:{0}, Z:{1}"
+      distance: "§eEntfernung: §f{0} Blöcke"
+      id: "§eID: §f{0}:{1}:{2}"
+      no_nearby: "§eKeine Dungeons innerhalb von 500 Blöcken von deinem Standort."
+
+    list:
+      no_dungeons: "§eEs wurden noch keine Dungeons generiert."
+      header: "§6=== Generierte Dungeons ==="
+      entry: "§e{0}. §f{1} [{2}, {3}] - §b{4}"
+      more: "§eBenutze /aidungeon list <Seite>, um weitere Dungeons zu sehen."
+
+    reload:
+      success: "§aAI-Dungeon-Generator-Konfiguration neu geladen."
+
+# Fallen-Nachrichten
+trap:
+  activated: "§cDu hast eine {0}-Falle ausgelöst!"
+  warden_warning: "§dDu hörst ein beunruhigendes Geräusch aus der Tiefe..."
+  warden_disturbance: "§dDu hast den Wächter gestört..."
+  ancient_warning: "Ein Sculk-Schreier ruft auf!"
+  ancient_disturbance: "§dDu hast etwas Uraltes gestört..."
+  arrow:
+    triggered: "§c§oDu hast eine Pfeilfalle ausgelöst!"
+  pit:
+    triggered: "§c§oDer Boden gibt unter dir nach!"
+  lava:
+    triggered: "§c§oLava sprudelt aus versteckten Öffnungen im Boden!"
+  poison_gas:
+    triggered: "§c§oGiftiges Gas füllt die Luft!"
+    nearby_triggered: "§c§oDu atmest giftiges Gas ein!"
+  cave_in:
+    triggered: "§c§oDie Decke bricht über dir zusammen!"
+  flame_jet:
+    triggered: "§c§oFlammen schießen aus dem Boden!"
+  teleporter:
+    triggered: "§c§oDu hast eine Teleportfalle ausgelöst!"
+  freezing:
+    triggered: "§c§oEine eisige Kälte umgibt dich!"
+  warden:
+    warning: "§dEin Wächter wurde beschworen!"
+    triggered: "§d§oDu hast etwas Uraltes gestört..."
+  sculk_shrieker:
+    warning: "§dEin Sculk-Schreier ruft auf!"
+    triggered: "§d§oDu hast einen Sculk-Schreier aktiviert!"
+
+# Fehlernachrichten
+error:
+  no_dungeons: "§cKeine Dungeons gefunden."
+  quest_full: "§eDein Quest-Log ist voll. Schließe erst einige Quests ab."
+  invalid_quest: "§cUngültige Quest."
+
+# Allgemeine Nachrichten
+general:
+  reload: "§aKonfiguration neu geladen."
