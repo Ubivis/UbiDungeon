@@ -1,9 +1,7 @@
 package com.ubivismedia.aidungeon.dungeons;
 
 import com.ubivismedia.aidungeon.AIDungeonGenerator;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -34,47 +32,83 @@ public class ItemHelper {
             player.sendMessage(ChatColor.YELLOW + "Your inventory was full, so the dungeon compass was dropped at your feet.");
         }
     }
-    
+
+    /**
+     * Find a suitable Y coordinate for the dungeon entrance
+     * @param world The world to check
+     * @param x X coordinate
+     * @param z Z coordinate
+     * @return The Y coordinate for the dungeon entrance
+     */
+    private static int findSuitableY(World world, int x, int z) {
+        if (world == null) {
+            return 64; // Default height if world not found
+        }
+
+        // Start from height 50, then work upwards to find the first non-air block
+        for (int y = 40; y < world.getMaxHeight() - 10; y++) {
+            if (world.getBlockAt(x, y, z).getType().isSolid() &&
+                    world.getBlockAt(x, y + 1, z).getType().isAir()) {
+                return y + 1; // Return the first air block above solid ground
+            }
+        }
+
+        return 64; // Default if no suitable location found
+    }
+
     /**
      * Create a compass that points to a dungeon
      */
     public static ItemStack createDungeonCompass(AIDungeonGenerator plugin, BiomeArea area) {
         ItemStack compass = new ItemStack(Material.COMPASS);
         CompassMeta meta = (CompassMeta) compass.getItemMeta();
-        
+
         if (meta != null) {
             // Set target location
             meta.setLodestoneTracked(false);
-            
+
+            // Get a world instance
+            World world = Bukkit.getWorld(area.getWorldName());
+            if (world != null) {
+                // Find suitable Y level
+                int y = findSuitableY(world, area.getCenterX(), area.getCenterZ());
+
+                // Create location object for the dungeon entrance
+                Location lodestoneLocation = new Location(world, area.getCenterX(), y, area.getCenterZ());
+
+                // Set the lodestone location for the compass
+                meta.setLodestone(lodestoneLocation);
+            }
+
             // Set display name
             meta.setDisplayName(ChatColor.GOLD + "Dungeon Compass");
-            
+
             // Add lore
             List<String> lore = new ArrayList<>();
             lore.add(ChatColor.GRAY + "Points to a dungeon in a");
             lore.add(ChatColor.GRAY + area.getPrimaryBiome().toString() + " biome");
             lore.add("");
-            lore.add(ChatColor.YELLOW + "Location: " + ChatColor.WHITE + 
+            lore.add(ChatColor.YELLOW + "Location: " + ChatColor.WHITE +
                     area.getCenterX() + ", " + area.getCenterZ());
             meta.setLore(lore);
-            
+
             // Add persistent data
             PersistentDataContainer container = meta.getPersistentDataContainer();
             NamespacedKey worldKey = new NamespacedKey(plugin, "dungeon_world");
             NamespacedKey xKey = new NamespacedKey(plugin, "dungeon_x");
             NamespacedKey zKey = new NamespacedKey(plugin, "dungeon_z");
-            
+
             container.set(worldKey, PersistentDataType.STRING, area.getWorldName());
             container.set(xKey, PersistentDataType.INTEGER, area.getCenterX());
             container.set(zKey, PersistentDataType.INTEGER, area.getCenterZ());
-            
+
             // Add item flags
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            
+
             compass.setItemMeta(meta);
         }
-        
+
         return compass;
     }
     
