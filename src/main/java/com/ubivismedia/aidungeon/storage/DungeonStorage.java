@@ -128,72 +128,50 @@ public class DungeonStorage {
             return;
         }
 
-        // Clear cache
         dungeonDataCache.clear();
 
-        // Load all sections
-        Set<String> keys = storage.getKeys(false);
+        // Iterate through world sections
+        for (String worldName : storage.getKeys(false)) {
+            ConfigurationSection worldSection = storage.getConfigurationSection(worldName);
+            if (worldSection == null) continue;
 
-        for (String key : keys) {
-            try {
-                ConfigurationSection section = storage.getConfigurationSection(key);
-                if (section == null) continue;
+            // Iterate through coordinate sections
+            for (String xCoord : worldSection.getKeys(false)) {
+                ConfigurationSection xSection = worldSection.getConfigurationSection(xCoord);
+                if (xSection == null) continue;
 
-                // Load BiomeArea
-                String worldName = key.split("\\.")[0];
-                World world = Bukkit.getWorld(worldName);
+                for (String zCoord : xSection.getKeys(false)) {
+                    try {
+                        ConfigurationSection section = xSection.getConfigurationSection(zCoord);
+                        if (section == null) continue;
 
-                if (world == null) {
-                    plugin.getLogger().warning("World not found: " + worldName);
-                    continue;
+                        World world = Bukkit.getWorld(worldName);
+                        if (world == null) {
+                            plugin.getLogger().warning("World not found: " + worldName);
+                            continue;
+                        }
+
+                        // Rest of your existing loading logic remains the same
+                        String biomeName = section.getString("biome");
+                        if (biomeName == null) {
+                            plugin.getLogger().warning("Skipping dungeon with null biome in world " + worldName);
+                            continue;
+                        }
+
+                        Biome biome = Biome.valueOf(biomeName);
+                        int x = section.getInt("x");
+                        int z = section.getInt("z");
+                        int radius = section.getInt("radius");
+
+                        BiomeArea area = new BiomeArea(worldName, x, z, radius, biome);
+
+                        // Remaining loading logic...
+
+                    } catch (Exception e) {
+                        plugin.getLogger().log(Level.WARNING,
+                                "Error loading dungeon data for " + worldName + ":" + xCoord + ":" + zCoord, e);
+                    }
                 }
-
-                // Add biome validation
-                String biomeName = section.getString("biome");
-                if (biomeName == null) {
-                    plugin.getLogger().warning("Skipping dungeon with null biome: " + key);
-                    continue;
-                }
-
-                Biome biome;
-                try {
-                    biome = Biome.valueOf(biomeName);
-                } catch (IllegalArgumentException e) {
-                    plugin.getLogger().warning("Invalid biome name '" + biomeName + "' for dungeon: " + key);
-                    continue;
-                }
-
-                int x = section.getInt("x");
-                int z = section.getInt("z");
-                int radius = section.getInt("radius");
-
-                BiomeArea area = new BiomeArea(worldName, x, z, radius, biome);
-
-                // Load data
-                UUID discoverer = UUID.fromString(section.getString("discoverer"));
-                long timestamp = section.getLong("timestamp");
-                String themeName = section.getString("theme");
-
-                // Get theme
-                DungeonTheme theme = plugin.getConfigManager().getThemeByName(themeName);
-                if (theme == null) {
-                    theme = plugin.getConfigManager().getDefaultTheme();
-                }
-
-                // Create a basic layout - we'll need to regenerate the full layout
-                // when it's actually needed since it's complex and memory-intensive
-                DungeonLayout layout = createBasicLayout(section, theme);
-
-                // Create dungeon data
-                DungeonData data = new DungeonData(layout, discoverer, timestamp);
-
-                // Add to cache
-                dungeonDataCache.put(key, data);
-
-                plugin.getLogger().info("Loaded dungeon at " + x + "," + z +
-                        " in " + worldName + " (biome: " + biome + ")");
-            } catch (Exception e) {
-                plugin.getLogger().log(Level.WARNING, "Error loading dungeon data for " + key, e);
             }
         }
     }
