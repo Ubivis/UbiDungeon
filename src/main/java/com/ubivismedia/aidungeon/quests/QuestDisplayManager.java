@@ -1,15 +1,19 @@
 package com.ubivismedia.aidungeon.quests;
 
 import com.ubivismedia.aidungeon.AIDungeonGenerator;
+import com.ubivismedia.aidungeon.dungeons.BiomeArea;
+import com.ubivismedia.aidungeon.storage.DungeonData;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.CompassMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -369,5 +373,169 @@ public class QuestDisplayManager {
             default:
                 return type.name();
         }
+    }
+    /**
+     * Show quest notification as a title to a player
+     */
+    public void showQuestNotification(Player player, Quest quest, boolean isNew) {
+        // Skip if display is disabled
+        if (!displayEnabled) {
+            return;
+        }
+
+        QuestTemplate template = quest.getTemplate();
+
+        if (isNew) {
+            // New quest notification
+            player.sendTitle(
+                    ChatColor.GOLD + "New Quest",
+                    ChatColor.WHITE + template.getName(),
+                    10, 40, 20
+            );
+
+            // Play sound
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 1.0f);
+        } else if (quest.isCompleted()) {
+            // Completed quest notification
+            player.sendTitle(
+                    ChatColor.GREEN + "Quest Completed!",
+                    ChatColor.WHITE + template.getName(),
+                    10, 50, 20
+            );
+
+            // Play sound
+            player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
+        } else {
+            // Progress update notification
+            player.sendTitle(
+                    ChatColor.GOLD + "Quest Progress",
+                    ChatColor.WHITE.toString() + quest.getProgress() + "/" + template.getRequiredAmount(),
+                    5, 30, 10
+            );
+
+            // Play sound
+            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 1.0f);
+        }
+    }
+
+    /**
+     * Create a compass that points to quest objectives
+     * @param player The player to give the compass to
+     * @param quest The quest to track
+     */
+    public void createQuestTracker(Player player, Quest quest) {
+        QuestTemplate template = quest.getTemplate();
+        QuestType type = template.getType();
+
+        // Get dungeon location
+        String dungeonId = quest.getDungeonId();
+        BiomeArea dungeonArea = getDungeonAreaFromId(dungeonId);
+
+        if (dungeonArea == null) {
+            player.sendMessage(ChatColor.RED + "Could not find the dungeon for this quest.");
+            return;
+        }
+
+        // Create the compass item
+        ItemStack compass = new ItemStack(Material.COMPASS);
+        ItemMeta meta = compass.getItemMeta();
+
+        if (meta != null) {
+            // Set compass name
+            meta.setDisplayName(ChatColor.GOLD + "Quest Tracker: " + ChatColor.WHITE + template.getName());
+
+            // Add lore
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.GRAY + template.getDescription());
+            lore.add("");
+            lore.add(ChatColor.YELLOW + "Progress: " + ChatColor.WHITE +
+                    quest.getProgress() + "/" + template.getRequiredAmount() +
+                    " (" + quest.getCompletionPercentage() + "%)");
+            lore.add(ChatColor.YELLOW + "Type: " + ChatColor.AQUA + formatQuestType(type));
+            lore.add("");
+            lore.add(ChatColor.GRAY + "This compass points to your quest objective");
+            meta.setLore(lore);
+
+            // Store quest ID in compass metadata
+            NamespacedKey questKey = new NamespacedKey(plugin, "quest_tracker");
+            meta.getPersistentDataContainer().set(questKey, PersistentDataType.STRING, quest.getId());
+
+            // Set compass to point to the dungeon
+            if (meta instanceof CompassMeta) {
+                CompassMeta compassMeta = (CompassMeta) meta;
+                compassMeta.setLodestoneTracked(false);
+
+                // Get suitable Y level
+                int y = getSuitableY(Bukkit.getWorld(dungeonArea.getWorldName()),
+                        dungeonArea.getCenterX(), dungeonArea.getCenterZ());
+
+                // Set lodestone location
+                Location targetLoc = new Location(
+                        Bukkit.getWorld(dungeonArea.getWorldName()),
+                        dungeonArea.getCenterX(),
+                        y,
+                        dungeonArea.getCenterZ()
+                );
+                compassMeta.setLodestone(targetLoc);
+            }
+
+            // Apply meta
+            compass.setItemMeta(meta);
+
+            // Give to player
+            player.getInventory().addItem(compass);
+            player.sendMessage(ChatColor.GREEN + "You received a Quest Tracker compass for: " +
+                    ChatColor.WHITE + template.getName());
+        }
+    }
+
+    /**
+     * Find a suitable Y coordinate for the quest marker
+     */
+    private int getSuitableY(World world, int x, int z) {
+        if (world == null) {
+            return 64; // Default height if world not found
+        }
+
+        // Find the first non-air block from the top
+        for (int y = world.getMaxHeight() - 10; y > 0; y--) {
+            if (!world.getBlockAt(x, y, z).getType().isAir() &&
+                    world.getBlockAt(x, y + 1, z).getType().isAir()) {
+                return y + 1;
+            }
+        }
+
+        return 64; // Default if no suitable Y found
+    }
+
+    /**
+     * Get dungeon area from an ID
+     */
+    private BiomeArea getDungeonAreaFromId(String dungeonId) {
+        String[] parts = dungeonId.split(":");
+        if (parts.length < 3) {
+            return null;
+        }
+
+        try {
+            String worldName = parts[0];
+            int x = Integer.parseInt(parts[1]);
+            int z = Integer.parseInt(parts[2]);
+
+            // Get all dungeons
+            Map<BiomeArea, DungeonData> dungeons = plugin.getDungeonManager().getAllDungeons();
+
+            for (BiomeArea area : dungeons.keySet()) {
+                if (area.getWorldName().equals(worldName) &&
+                        area.getCenterX() == x &&
+                        area.getCenterZ() == z) {
+                    return area;
+                }
+            }
+        } catch (Exception e) {
+            plugin.getLogger().warning("Failed to parse dungeon ID: " + dungeonId);
+        }
+
+        return null;
     }
 }

@@ -1058,4 +1058,12 @@ public class QuestSystem implements Listener {
             displayManager.cleanupAllDisplays();
         }
     }
+
+    /**
+     * Get the display manager for quests
+     * @return The QuestDisplayManager instance
+     */
+    public QuestDisplayManager getDisplayManager() {
+        return displayManager;
+    }
 }

@@ -13,7 +13,7 @@ commands:
     permission: aidungeon.admin
   quests:
     description: Quest management commands
-    usage: /quests [list|claim|abandon]
+    usage: /quests [list|details|track|claim|abandon]
     aliases: [quest, q]
     permission: aidungeon.quest
 permissions:
