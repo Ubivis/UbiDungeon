@@ -562,3 +562,95 @@ themes:
       - WARDEN_SUMMON
       - TELEPORTER
       - SCULK_SHRIEKER
+
+  MINESHAFT:
+    primary-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+      - MOSSY_COBBLESTONE
+    accent-blocks:
+      - OAK_PLANKS
+      - IRON_BARS
+      - FENCE
+    floor-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+    ceiling-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+    light-blocks:
+      - TORCH
+      - REDSTONE_TORCH
+    treasure-chance: 0.6
+    traps:
+      - ARROW
+      - PIT
+
+  DWARVEN_HALLS:
+    primary-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+      - ANDESITE
+    accent-blocks:
+      - IRON_BLOCK
+      - GOLD_BLOCK
+      - BRICKS
+    floor-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+    ceiling-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+    light-blocks:
+      - TORCH
+      - LANTERN
+    treasure-chance: 0.65
+    traps:
+      - ARROW
+      - PIT
+      - CAVE_IN
+
+  ICE_CASTLE:
+    primary-blocks:
+      - ICE
+      - PACKED_ICE
+      - BLUE_ICE
+    accent-blocks:
+      - SNOW_BLOCK
+      - WHITE_TERRACOTTA
+    floor-blocks:
+      - PACKED_ICE
+      - SNOW_BLOCK
+    ceiling-blocks:
+      - PACKED_ICE
+      - SNOW_BLOCK
+    light-blocks:
+      - TORCH
+      - LANTERN
+    treasure-chance: 0.7
+    traps:
+      - ARROW
+      - FREEZING
+
+  UNDERWATER_RUINS:
+    primary-blocks:
+      - PRISMARINE
+      - PRISMARINE_BRICKS
+      - SMOOTH_PRISMARINE
+    accent-blocks:
+      - SEA_LANTERN
+      - DEAD_CORAL_BLOCK
+    floor-blocks:
+      - PRISMARINE
+      - SMOOTH_PRISMARINE
+    ceiling-blocks:
+      - PRISMARINE_BRICKS
+      - SMOOTH_PRISMARINE
+    light-blocks:
+      - SEA_LANTERN
+      - TORCH
+    treasure-chance: 0.75
+    traps:
+      - PIT
+      - POISON_GAS
+      - TELEPORTER
