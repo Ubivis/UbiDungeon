@@ -28,6 +28,14 @@ generation:
       large: 60
     optimization-generations: 10
 
+# Discovery settings
+discovery:
+  enable-compass: true
+  show-on-map: true
+  discovery-radius: 100
+  hint-message: true
+  exploration-threshold: 0.1  # 10% of a biome must be explored before generating a dungeon
+
 # Biome Theme Mappings
 biome-themes:
   DESERT: "PYRAMID"
@@ -668,7 +676,20 @@ quests:
   enabled: true
   max_quests_per_player: 5
   show_claimed: false
-  
+
+  display:
+    enabled: true
+    max_displayed_quests: 3
+    boss_bar:
+      enabled: true
+      show_completed: true
+    action_bar:
+      enabled: true
+      duration: 60  # In Ticks (3 Sekunden)
+    sound_effects:
+      progress: true
+      completion: true
+
   # Quest Templates
   templates:
     boss_slayer:

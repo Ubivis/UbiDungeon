@@ -22,6 +22,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -49,6 +50,9 @@ public class QuestSystem implements Listener {
     
     // Quest templates
     private final List<QuestTemplate> questTemplates = new ArrayList<>();
+
+    // Quest Display Manager
+    private QuestDisplayManager displayManager;
     
     public QuestSystem(AIDungeonGenerator plugin) {
         this.plugin = plugin;
@@ -60,7 +64,10 @@ public class QuestSystem implements Listener {
         
         // Load quest templates
         loadQuestTemplates();
-        
+
+        // Initialize display manager
+        this.displayManager = new QuestDisplayManager(plugin, this);
+
         // Load player quests from storage
         Bukkit.getScheduler().runTaskAsynchronously(plugin, this::loadPlayerQuests);
     }
@@ -295,18 +302,18 @@ public class QuestSystem implements Listener {
         if (!plugin.getConfig().getBoolean("quests.enabled", true)) {
             return;
         }
-        
+
         // Get dungeon ID
         String dungeonId = dungeonArea.getUniqueId();
-        
+
         // Check if player already has this dungeon's quest
         if (hasQuestForDungeon(player.getUniqueId(), dungeonId)) {
             return;
         }
-        
+
         // Get player quests map
         Map<String, Quest> quests = playerQuests.computeIfAbsent(player.getUniqueId(), k -> new HashMap<>());
-        
+
         // Check if player has max quests
         int maxQuests = plugin.getConfig().getInt("quests.max_quests_per_player", 5);
         if (quests.size() >= maxQuests) {
@@ -315,7 +322,7 @@ public class QuestSystem implements Listener {
                     .filter(Quest::isCompleted)
                     .map(Quest::getId)
                     .findFirst();
-            
+
             if (completedQuestId.isPresent()) {
                 quests.remove(completedQuestId.get());
             } else {
@@ -324,48 +331,51 @@ public class QuestSystem implements Listener {
                 return;
             }
         }
-        
+
         // Get dungeon theme
         DungeonTheme theme = null;
         DungeonData dungeonData = plugin.getDungeonManager().getDungeon(dungeonArea);
         if (dungeonData != null) {
             theme = dungeonData.getTheme();
         }
-        
+
         // Select appropriate quest templates for this theme
         List<QuestTemplate> appropriateTemplates = new ArrayList<>(questTemplates);
-        
+
         // Filter by theme if needed
         if (theme != null) {
             // Logic to filter templates by theme
             // This is where you could implement theme-specific quests
         }
-        
+
         // Skip if no appropriate templates
         if (appropriateTemplates.isEmpty()) {
             return;
         }
-        
+
         // Choose a random template
         QuestTemplate template = appropriateTemplates.get(random.nextInt(appropriateTemplates.size()));
-        
+
         // Create a new quest ID
         String questId = UUID.randomUUID().toString();
-        
+
         // Create the quest
         Quest quest = new Quest(questId, template, dungeonId, 0, false, false);
-        
+
         // Add to player quests
         quests.put(questId, quest);
-        
+
         // Save to storage
         savePlayerQuests();
-        
+
         // Notify player
         player.sendMessage(ChatColor.GOLD + "New Quest: " + ChatColor.WHITE + template.getName());
         player.sendMessage(ChatColor.GRAY + template.getDescription());
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 1.0f);
-        
+
+        // Update the quest display (add this line)
+        displayManager.updatePlayerDisplay(player);
+
         // Spawn quest-related markers in the dungeon
         spawnQuestMarkers(quest, dungeonArea);
     }
@@ -621,65 +631,75 @@ public class QuestSystem implements Listener {
         if (!plugin.getConfig().getBoolean("quests.enabled", true)) {
             return;
         }
-        
+
         UUID playerUuid = player.getUniqueId();
         Map<String, Quest> quests = playerQuests.get(playerUuid);
-        
+
         if (quests == null || quests.isEmpty()) {
             return;
         }
-        
+
         // Find active quests matching this type and target
         for (Quest quest : quests.values()) {
             if (quest.isCompleted() || quest.isRewardClaimed()) {
                 continue;
             }
-            
+
             QuestTemplate template = quest.getTemplate();
-            
+
             // Check if quest type matches
             if (template.getType() != type) {
                 continue;
             }
-            
+
             // Check target specifics based on quest type
             boolean matches = false;
-            
+
             switch (type) {
                 case KILL:
-                    matches = template.getTargetEntity().equals(targetId) || 
-                             (targetId.equals("BOSS") && template.getTargetEntity().equals("BOSS"));
+                    matches = template.getTargetEntity().equals(targetId) ||
+                            (targetId.equals("BOSS") && template.getTargetEntity().equals("BOSS"));
                     break;
-                    
+
                 case COLLECT:
                     matches = template.getTargetItem().equals(targetId);
                     break;
-                    
+
                 case EXPLORE:
                     matches = true; // Explorer quests don't have specific targets
                     break;
             }
-            
+
             // Update progress if matched
             if (matches) {
                 int newProgress = quest.getProgress() + 1;
                 quest.setProgress(newProgress);
-                
+
                 // Check if completed
-                if (newProgress >= template.getRequiredAmount()) {
+                boolean completed = newProgress >= template.getRequiredAmount();
+                if (completed) {
                     quest.setCompleted(true);
-                    
+
                     // Notify player
                     player.sendMessage(ChatColor.GREEN + "Quest Completed: " + ChatColor.WHITE + template.getName());
                     player.sendMessage(ChatColor.YELLOW + "Return to the Dungeon Gate to claim your reward!");
                     player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);
+
+                    // Show quest completion in action bar (add this line)
+                    displayManager.showQuestUpdateInActionBar(player, quest, true);
                 } else {
                     // Progress notification
-                    player.sendMessage(ChatColor.YELLOW + "Quest Progress: " + newProgress + "/" + template.getRequiredAmount() + 
-                                      " - " + template.getName());
+                    player.sendMessage(ChatColor.YELLOW + "Quest Progress: " + newProgress + "/" + template.getRequiredAmount() +
+                            " - " + template.getName());
                     player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 1.0f);
+
+                    // Show quest progress in action bar (add this line)
+                    displayManager.showQuestUpdateInActionBar(player, quest, false);
                 }
-                
+
+                // Update the quest display (add this line)
+                displayManager.updatePlayerDisplay(player);
+
                 // Save to storage
                 savePlayerQuests();
             }
@@ -757,22 +777,22 @@ public class QuestSystem implements Listener {
                 // Load from storage
                 if (plugin.getConfig().isConfigurationSection("quests.player_quests." + playerUuid.toString())) {
                     Map<String, Quest> quests = new HashMap<>();
-                    
+
                     String basePath = "quests.player_quests." + playerUuid.toString() + ".";
-                    
+
                     for (String questId : plugin.getConfig().getConfigurationSection(basePath).getKeys(false)) {
                         String questPath = basePath + questId + ".";
-                        
+
                         // Load quest data
                         String templateId = plugin.getConfig().getString(questPath + "template_id");
                         QuestTemplate template = getQuestTemplate(templateId);
-                        
+
                         if (template != null) {
                             String dungeonId = plugin.getConfig().getString(questPath + "dungeon_id");
                             int progress = plugin.getConfig().getInt(questPath + "progress", 0);
                             boolean completed = plugin.getConfig().getBoolean(questPath + "completed", false);
                             boolean rewardClaimed = plugin.getConfig().getBoolean(questPath + "reward_claimed", false);
-                            
+
                             // Create quest
                             Quest quest = new Quest(
                                     questId,
@@ -782,43 +802,55 @@ public class QuestSystem implements Listener {
                                     completed,
                                     rewardClaimed
                             );
-                            
+
                             quests.put(questId, quest);
                         }
                     }
-                    
+
                     playerQuests.put(playerUuid, quests);
-                    
+
                     // Show active quest status to player
                     Bukkit.getScheduler().runTask(plugin, () -> {
                         Player player = event.getPlayer();
-                        
+
                         // Show uncompleted quests
                         boolean hasActiveQuests = false;
                         for (Quest quest : quests.values()) {
                             if (!quest.isRewardClaimed()) {
                                 hasActiveQuests = true;
                                 QuestTemplate template = quest.getTemplate();
-                                
+
                                 if (quest.isCompleted()) {
-                                    player.sendMessage(ChatColor.GREEN + "Completed Quest: " + ChatColor.WHITE + 
-                                                      template.getName() + ChatColor.YELLOW + " (Reward Available)");
+                                    player.sendMessage(ChatColor.GREEN + "Completed Quest: " + ChatColor.WHITE +
+                                            template.getName() + ChatColor.YELLOW + " (Reward Available)");
                                 } else {
-                                    player.sendMessage(ChatColor.YELLOW + "Active Quest: " + ChatColor.WHITE + 
-                                                      template.getName() + ChatColor.GRAY + " (" + quest.getProgress() + 
-                                                      "/" + template.getRequiredAmount() + ")");
+                                    player.sendMessage(ChatColor.YELLOW + "Active Quest: " + ChatColor.WHITE +
+                                            template.getName() + ChatColor.GRAY + " (" + quest.getProgress() +
+                                            "/" + template.getRequiredAmount() + ")");
                                 }
                             }
                         }
-                        
+
                         if (hasActiveQuests) {
-                            player.sendMessage(ChatColor.GRAY + "Use " + ChatColor.WHITE + "/quests" + 
-                                              ChatColor.GRAY + " to view your quests");
+                            player.sendMessage(ChatColor.GRAY + "Use " + ChatColor.WHITE + "/quests" +
+                                    ChatColor.GRAY + " to view your quests");
+
+                            // Update the quest display (add this line)
+                            displayManager.updatePlayerDisplay(player);
                         }
                     });
                 }
             });
+        } else {
+            // If the quests are already loaded, just update the display
+            displayManager.updatePlayerDisplay(event.getPlayer());
         }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        // Clean up the quest display
+        displayManager.cleanupPlayerDisplay(event.getPlayer().getUniqueId());
     }
     
     @EventHandler
@@ -1004,17 +1036,26 @@ public class QuestSystem implements Listener {
     public boolean abandonQuest(Player player, String questId) {
         UUID playerUuid = player.getUniqueId();
         Map<String, Quest> quests = playerQuests.get(playerUuid);
-        
+
         if (quests == null || !quests.containsKey(questId)) {
             return false;
         }
-        
+
         // Remove quest
         quests.remove(questId);
-        
+
         // Save to storage
         savePlayerQuests();
-        
+
+        // Update the quest display (add this line)
+        displayManager.updatePlayerDisplay(player);
+
         return true;
+    }
+
+    public void cleanupDisplays() {
+        if (displayManager != null) {
+            displayManager.cleanupAllDisplays();
+        }
     }
 }

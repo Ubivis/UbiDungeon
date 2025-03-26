@@ -5,11 +5,13 @@ import com.ubivismedia.aidungeon.commands.QuestCommand;
 import com.ubivismedia.aidungeon.config.ConfigManager;
 import com.ubivismedia.aidungeon.dungeons.BiomeTracker;
 import com.ubivismedia.aidungeon.dungeons.DungeonManager;
+import com.ubivismedia.aidungeon.dungeons.BiomeExplorationTracker;
 import com.ubivismedia.aidungeon.handlers.MobHandler;
 import com.ubivismedia.aidungeon.handlers.TrapHandler;
 import com.ubivismedia.aidungeon.listeners.PlayerMoveListener;
 import com.ubivismedia.aidungeon.quests.QuestSystem;
 import com.ubivismedia.aidungeon.storage.DungeonStorage;
+import com.ubivismedia.aidungeon.api.AIDungeonAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,7 +24,9 @@ public class AIDungeonGenerator extends JavaPlugin {
     private BiomeTracker biomeTracker;
     private DungeonStorage dungeonStorage;
     private QuestSystem questSystem;
-    
+    private BiomeExplorationTracker biomeExplorationTracker;
+    private AIDungeonAPI api;
+
     @Override
     public void onEnable() {
         // Initialize config
@@ -44,7 +48,12 @@ public class AIDungeonGenerator extends JavaPlugin {
         
         // Initialize quest system
         questSystem = new QuestSystem(this);
-        
+
+        // Initialize biome exploration tracker
+        biomeExplorationTracker = new BiomeExplorationTracker();
+
+        this.api = new AIDungeonAPI(this);
+
         // Register commands
         getCommand("aidungeon").setExecutor(new DungeonCommand(this, dungeonManager));
         getCommand("quests").setExecutor(new QuestCommand(this, questSystem));
@@ -84,6 +93,7 @@ public class AIDungeonGenerator extends JavaPlugin {
         // Save quest data
         if (questSystem != null) {
             questSystem.savePlayerQuests();
+            questSystem.cleanupDisplays();
         }
         
         // Cancel any pending tasks
@@ -110,6 +120,14 @@ public class AIDungeonGenerator extends JavaPlugin {
     
     public QuestSystem getQuestSystem() {
         return questSystem;
+    }
+
+    public BiomeExplorationTracker getBiomeExplorationTracker() {
+        return biomeExplorationTracker;
+    }
+
+    public AIDungeonAPI getAPI() {
+        return api;
     }
     
     /**

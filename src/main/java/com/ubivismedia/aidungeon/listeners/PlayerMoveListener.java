@@ -30,37 +30,59 @@ public class PlayerMoveListener implements Listener {
         this.dungeonManager = dungeonManager;
         this.questSystem = questSystem;
     }
-    
+
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         // Skip if only pitch/yaw changed
-        if (event.getFrom().getBlockX() == event.getTo().getBlockX() 
+        if (event.getFrom().getBlockX() == event.getTo().getBlockX()
                 && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
             return;
         }
-        
+
         Player player = event.getPlayer();
-        
+
         // Skip if player doesn't have permission
         if (!player.hasPermission("aidungeon.discover")) {
             return;
         }
-        
+
         // Check if player has entered a new biome area
         BiomeArea newArea = biomeTracker.checkPlayerBiomeChange(player);
-        
+
         // If a new biome area was detected
         if (newArea != null) {
-            // Check if we should generate a dungeon here
-            if (dungeonManager.canGenerateDungeon(player, newArea)) {
+            // Track biome exploration
+            double explorationPercentage = plugin.getBiomeExplorationTracker().recordExploredChunk(
+                    player,
+                    player.getWorld(),
+                    newArea.getPrimaryBiome()
+            );
+
+            // Check if we've explored enough of this biome (10% threshold)
+            double threshold = plugin.getConfig().getDouble("discovery.exploration-threshold", 0.1);
+            boolean shouldGenerateDungeon = explorationPercentage >= threshold &&
+                    !plugin.getBiomeExplorationTracker().hasDungeonBeenGenerated(
+                            player.getWorld(),
+                            newArea.getPrimaryBiome()
+                    );
+
+            // Check if we should generate a dungeon
+            if (shouldGenerateDungeon && dungeonManager.canGenerateDungeon(player, newArea)) {
                 // Queue dungeon generation
                 dungeonManager.queueDungeonGeneration(newArea, player);
-                
+
+                // Mark this biome as having a dungeon
+                plugin.getBiomeExplorationTracker().markDungeonGenerated(
+                        player.getWorld(),
+                        newArea.getPrimaryBiome()
+                );
+
                 // Debug message to player if enabled
                 if (plugin.getConfig().getBoolean("settings.debug-mode", false)) {
-                    player.sendMessage("§7[Debug] Dungeon generation queued in " 
-                            + newArea.getPrimaryBiome() + " at " 
-                            + newArea.getCenterX() + "," + newArea.getCenterZ());
+                    player.sendMessage("§7[Debug] Dungeon generation queued in "
+                            + newArea.getPrimaryBiome() + " at "
+                            + newArea.getCenterX() + "," + newArea.getCenterZ() +
+                            " (Exploration: " + String.format("%.1f%%", explorationPercentage * 100) + ")");
                 }
             } else {
                 // Check if entering an existing dungeon
@@ -79,10 +101,11 @@ public class PlayerMoveListener implements Listener {
         // This will force a new biome check on their first movement
         biomeTracker.clearPlayer(event.getPlayer().getUniqueId());
     }
-    
+
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         // Clear tracking data to save memory
         biomeTracker.clearPlayer(event.getPlayer().getUniqueId());
+        plugin.getBiomeExplorationTracker().resetPlayerData(event.getPlayer().getUniqueId());
     }
 }
