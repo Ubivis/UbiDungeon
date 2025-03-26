@@ -16,7 +16,7 @@ generation:
     tasks-per-tick: 2
     max-concurrent-generations: 3
   algorithm:
-    room-size: 
+    room-size:
       min: 5
       max: 15
     corridor-length:
@@ -28,7 +28,7 @@ generation:
       large: 60
     optimization-generations: 10
 
-# Discovery settings
+# Discovery Settings
 discovery:
   enable-compass: true
   show-on-map: true
@@ -39,7 +39,6 @@ discovery:
 # Biome Theme Mappings
 biome-themes:
   DESERT: "PYRAMID"
-  DESERT_HILLS: "PYRAMID"
   BADLANDS: "MINESHAFT"
   FOREST: "RUINS"
   DARK_FOREST: "WITCH_HUT"
@@ -50,6 +49,213 @@ biome-themes:
   SWAMP: "SUNKEN_TEMPLE"
   JUNGLE: "TEMPLE"
   OCEAN: "UNDERWATER_RUINS"
+
+# Trap Settings
+traps:
+  enabled: true
+  cooldown: 60
+  difficulty:
+    easy: 0.3   # 30% damage multiplier
+    normal: 1.0 # normal damage
+    hard: 1.5   # 50% more damage
+  types:
+    ARROW:
+      enabled: true
+      damage: 4.0
+    PIT:
+      enabled: true
+      depth: 4
+      restore-time: 15
+    LAVA:
+      enabled: true
+      duration: 10
+    POISON_GAS:
+      enabled: true
+      duration: 10
+      radius: 3
+    CAVE_IN:
+      enabled: true
+      damage: 6.0
+      restore-time: 30
+    FLAME_JET:
+      enabled: true
+      duration: 5
+      fire-ticks: 100
+    TELEPORTER:
+      enabled: true
+      min-distance: 10
+      max-distance: 30
+    FREEZING:
+      enabled: true
+      duration: 10
+      slow-level: 3
+    WARDEN_SUMMON:
+      enabled: true
+      summon_chance: 0.7
+      warning_sounds: 3
+      despawn_time: 120
+    SCULK_SHRIEKER:
+      enabled: true
+      shriek_count: 3
+      radius: 5
+      cooldown: 10
+
+# Mob Settings
+mobs:
+  enabled: true
+  difficulty-multiplier: 1.0
+  elite:
+    chance: 0.1
+    health-multiplier: 2.0
+    damage-multiplier: 1.5
+    drop-multiplier: 2.0
+  equipment:
+    enabled: true
+    drop-chance: 0.03
+    elite-drop-chance: 0.08
+
+# Rewards
+rewards:
+  enable: true
+  common-items:
+    - IRON_INGOT:5
+    - GOLD_INGOT:3
+    - BREAD:10
+  rare-items:
+    - DIAMOND:2
+    - EMERALD:3
+    - ENCHANTED_BOOK:1
+  legendary-items:
+    - NETHERITE_INGOT:1
+    - TRIDENT:1
+    - ELYTRA:1
+  custom-items:
+    - name: "Ancient Sword"
+      material: DIAMOND_SWORD
+      enchantments:
+        - SHARPNESS:5
+        - FIRE_ASPECT:2
+      chance: 0.1
+
+# Quest System Configuration
+quests:
+  enabled: true
+  max_quests_per_player: 5
+  show_claimed: false
+
+  display:
+    enabled: true
+    max_displayed_quests: 3
+    boss_bar:
+      enabled: true
+      show_completed: true
+    action_bar:
+      enabled: true
+      duration: 60  # In Ticks (3 Sekunden)
+    sound_effects:
+      progress: true
+      completion: true
+
+  # Quest Templates
+  templates:
+    boss_slayer:
+      name: Boss Slayer
+      description: Defeat the dungeon boss to claim your reward
+      type: KILL
+      required_amount: 1
+      target_entity: BOSS
+      reward_commands:
+        - give %player% diamond 5
+        - xp add %player% 500
+      reward_messages:
+        - You have defeated the dungeon boss!
+        - The cursed spirits can now rest.
+      reward_items:
+        - DIAMOND:5
+        - EXPERIENCE_BOTTLE:10
+
+    treasure_hunter:
+      name: Treasure Hunter
+      description: Collect the lost artifacts scattered throughout the dungeon
+      type: COLLECT
+      required_amount: 3
+      target_item: EMERALD
+      reward_commands:
+        - give %player% gold_ingot 10
+        - xp add %player% 300
+      reward_messages:
+        - You have collected all the lost artifacts!
+        - Your archaeological skills are impressive.
+      reward_items:
+        - GOLD_INGOT:10
+        - ENCHANTED_BOOK:1
+
+    dungeon_explorer:
+      name: Dungeon Explorer
+      description: Discover the hidden treasure chambers of the dungeon
+      type: EXPLORE
+      required_amount: 2
+      reward_commands:
+        - give %player% iron_ingot 15
+        - xp add %player% 200
+      reward_messages:
+        - You have explored the dungeon thoroughly!
+        - Your cartography skills are impressive.
+      reward_items:
+        - MAP:1
+        - COMPASS:1
+        - IRON_INGOT:15
+
+    monster_hunter:
+      name: Monster Hunter
+      description: Cleanse the dungeon of its monstrous inhabitants
+      type: KILL
+      required_amount: 15
+      target_entity: ZOMBIE
+      reward_commands:
+        - give %player% experience_bottle 5
+        - xp add %player% 250
+      reward_messages:
+        - You have cleansed the dungeon of monsters!
+        - The dungeon is now safer thanks to your efforts.
+      reward_items:
+        - EXPERIENCE_BOTTLE:5
+        - GOLDEN_APPLE:2
+
+    arcane_collector:
+      name: Arcane Collector
+      description: Collect magical essence crystals from the dungeon
+      type: COLLECT
+      required_amount: 5
+      target_item: AMETHYST_SHARD
+      reward_commands:
+        - give %player% glowstone 10
+        - xp add %player% 350
+      reward_messages:
+        - You have collected all the magical essence crystals!
+        - Your understanding of the arcane has increased.
+      reward_items:
+        - EXPERIENCE_BOTTLE:7
+        - ENCHANTED_BOOK:1
+        - GLOWSTONE:10
+
+  # Biome-specific quests
+  biome_quests:
+    DESERT:
+      - boss_slayer
+      - treasure_hunter
+    FOREST:
+      - monster_hunter
+      - dungeon_explorer
+    MOUNTAINS:
+      - boss_slayer
+      - arcane_collector
+    OCEAN:
+      - treasure_hunter
+      - dungeon_explorer
+    default:
+      - monster_hunter
+      - boss_slayer
 
 # Dungeon Themes
 themes:
@@ -98,103 +304,6 @@ themes:
       - ARROW
       - PIT
       - CAVE_IN
-      
-  MINESHAFT:
-    primary-blocks:
-      - OAK_PLANKS
-      - SPRUCE_PLANKS
-      - OAK_FENCE
-    accent-blocks:
-      - COBWEB
-      - COAL_ORE
-      - IRON_ORE
-    floor-blocks:
-      - DIRT
-      - COARSE_DIRT
-      - GRAVEL
-    ceiling-blocks:
-      - OAK_PLANKS
-      - SPRUCE_PLANKS
-    light-blocks:
-      - TORCH
-      - LANTERN
-    treasure-chance: 0.6
-    traps:
-      - PIT
-      - CAVE_IN
-      - POISON_GAS
-      
-  DWARVEN_HALLS:
-    primary-blocks:
-      - STONE_BRICKS
-      - POLISHED_ANDESITE
-      - POLISHED_GRANITE
-    accent-blocks:
-      - GOLD_BLOCK
-      - IRON_BLOCK
-      - ANVIL
-    floor-blocks:
-      - POLISHED_ANDESITE
-      - STONE_BRICKS
-    ceiling-blocks:
-      - STONE_BRICKS
-      - POLISHED_GRANITE
-    light-blocks:
-      - LANTERN
-      - TORCH
-    treasure-chance: 0.7
-    traps:
-      - LAVA
-      - PIT
-      - FIRE
-      
-  ICE_CASTLE:
-    primary-blocks:
-      - PACKED_ICE
-      - BLUE_ICE
-      - ICE
-    accent-blocks:
-      - SNOW_BLOCK
-      - BLUE_STAINED_GLASS
-    floor-blocks:
-      - PACKED_ICE
-      - SNOW_BLOCK
-    ceiling-blocks:
-      - ICE
-      - BLUE_ICE
-    light-blocks:
-      - SEA_LANTERN
-      - SOUL_LANTERN
-    treasure-chance: 0.6
-    traps:
-      - FREEZING
-      - PIT
-      - TELEPORTER
-      
-  UNDERWATER_RUINS:
-    primary-blocks:
-      - PRISMARINE
-      - PRISMARINE_BRICKS
-      - DARK_PRISMARINE
-    accent-blocks:
-      - SEA_LANTERN
-      - CONDUIT
-    floor-blocks:
-      - PRISMARINE
-      - SAND
-      - GRAVEL
-    ceiling-blocks:
-      - PRISMARINE_BRICKS
-      - DARK_PRISMARINE
-    light-blocks:
-      - SEA_LANTERN
-      - GLOWSTONE
-    treasure-chance: 0.8
-    traps:
-      - POISON_GAS
-      - TELEPORTER
-      - GUARDIAN_TRAP
-
   WITCH_HUT:
     primary-blocks:
       - DARK_OAK_PLANKS
@@ -220,7 +329,6 @@ themes:
       - POISON_GAS
       - PIT
       - TELEPORTER
-
   VILLAGE_RUINS:
     primary-blocks:
       - COBBLESTONE
@@ -454,339 +562,3 @@ themes:
       - WARDEN_SUMMON
       - TELEPORTER
       - SCULK_SHRIEKER
-
-# Trap Settings
-traps:
-  enabled: true
-  cooldown: 60
-  difficulty: 
-    easy: 0.3   # 30% damage multiplier
-    normal: 1.0 # normal damage
-    hard: 1.5   # 50% more damage
-  types:
-    ARROW:
-      enabled: true
-      damage: 4.0
-    PIT:
-      enabled: true
-      depth: 4
-      restore-time: 15
-    LAVA:
-      enabled: true
-      duration: 10
-    POISON_GAS:
-      enabled: true
-      duration: 10
-      radius: 3
-    CAVE_IN:
-      enabled: true
-      damage: 6.0
-      restore-time: 30
-    FLAME_JET:
-      enabled: true
-      duration: 5
-      fire-ticks: 100
-    TELEPORTER:
-      enabled: true
-      min-distance: 10
-      max-distance: 30
-    FREEZING:
-      enabled: true
-      duration: 10
-      slow-level: 3
-    WARDEN_SUMMON:
-      enabled: true
-      summon_chance: 0.7
-      warning_sounds: 3
-      despawn_time: 120
-    SCULK_SHRIEKER:
-      enabled: true
-      shriek_count: 3
-      radius: 5
-      cooldown: 10
-
-# Mob Settings
-mobs:
-  enabled: true
-  difficulty-multiplier: 1.0
-  elite:
-    chance: 0.1
-    health-multiplier: 2.0
-    damage-multiplier: 1.5
-    drop-multiplier: 2.0
-  equipment:
-    enabled: true
-    drop-chance: 0.03
-    elite-drop-chance: 0.08
-  
-# Discovery Settings
-discovery:
-  enable-compass: true
-  show-on-map: true
-  discovery-radius: 100
-  hint-message: true
-  
-# Rewards
-rewards:
-  enable: true
-  common-items:
-    - IRON_INGOT:5
-    - GOLD_INGOT:3
-    - BREAD:10
-  rare-items:
-    - DIAMOND:2
-    - EMERALD:3
-    - ENCHANTED_BOOK:1
-  legendary-items:
-    - NETHERITE_INGOT:1
-    - TRIDENT:1
-    - ELYTRA:1
-  custom-items:
-    - name: "Ancient Sword"
-      material: DIAMOND_SWORD
-      enchantments:
-        - SHARPNESS:5
-        - FIRE_ASPECT:2
-      chance: 0.1# AIDungeonGenerator Configuration
-
-# General Settings
-settings:
-  debug-mode: false
-  dungeon-per-biome: true
-  min-distance-between-dungeons: 1000
-  world-blacklist:
-    - world_nether
-    - world_the_end
-
-# Generation Settings
-generation:
-  async:
-    enabled: true
-    tasks-per-tick: 2
-    max-concurrent-generations: 3
-  algorithm:
-    room-size: 
-      min: 5
-      max: 15
-    corridor-length:
-      min: 3
-      max: 10
-    dungeon-size:
-      small: 25
-      medium: 40
-      large: 60
-    optimization-generations: 10
-
-# Biome Theme Mappings
-biome-themes:
-  DESERT: "PYRAMID"
-  DESERT_HILLS: "PYRAMID"
-  BADLANDS: "MINESHAFT"
-  FOREST: "RUINS"
-  DARK_FOREST: "WITCH_HUT"
-  PLAINS: "VILLAGE_RUINS"
-  MOUNTAINS: "DWARVEN_HALLS"
-  SAVANNA: "TRIBAL_SHRINE"
-  TAIGA: "ICE_CASTLE"
-  SWAMP: "SUNKEN_TEMPLE"
-  JUNGLE: "TEMPLE"
-  OCEAN: "UNDERWATER_RUINS"
-
-# Dungeon Themes
-themes:
-  PYRAMID:
-    primary-blocks:
-      - SANDSTONE
-      - SMOOTH_SANDSTONE
-      - CUT_SANDSTONE
-    accent-blocks:
-      - GOLD_BLOCK
-      - CHISELED_SANDSTONE
-    floor-blocks:
-      - SANDSTONE
-      - SMOOTH_SANDSTONE
-    ceiling-blocks:
-      - SANDSTONE
-      - SMOOTH_SANDSTONE
-    light-blocks:
-      - TORCH
-      - LANTERN
-    treasure-chance: 0.7
-    traps:
-      - ARROW
-      - PIT
-      - LAVA
-
-  RUINS:
-    primary-blocks:
-      - COBBLESTONE
-      - MOSSY_COBBLESTONE
-      - STONE_BRICKS
-    accent-blocks:
-      - CRACKED_STONE_BRICKS
-      - MOSSY_STONE_BRICKS
-    floor-blocks:
-      - COBBLESTONE
-      - DIRT
-      - GRAVEL
-    ceiling-blocks:
-      - COBBLESTONE
-      - STONE_BRICKS
-    light-blocks:
-      - TORCH
-    treasure-chance: 0.5
-    traps:
-      - ARROW
-      - PIT
-      - CAVE_IN
-
-# Discovery Settings
-discovery:
-  enable-compass: true
-  show-on-map: true
-  discovery-radius: 100
-  hint-message: true
-  
-# Rewards
-rewards:
-  enable: true
-  common-items:
-    - IRON_INGOT:5
-    - GOLD_INGOT:3
-    - BREAD:10
-  rare-items:
-    - DIAMOND:2
-    - EMERALD:3
-    - ENCHANTED_BOOK:1
-  legendary-items:
-    - NETHERITE_INGOT:1
-    - TRIDENT:1
-    - ELYTRA:1
-  custom-items:
-    - name: "Ancient Sword"
-      material: DIAMOND_SWORD
-      enchantments:
-        - SHARPNESS:5
-        - FIRE_ASPECT:2
-      chance: 0.1
-
-# Quest System Configuration
-
-quests:
-  enabled: true
-  max_quests_per_player: 5
-  show_claimed: false
-
-  display:
-    enabled: true
-    max_displayed_quests: 3
-    boss_bar:
-      enabled: true
-      show_completed: true
-    action_bar:
-      enabled: true
-      duration: 60  # In Ticks (3 Sekunden)
-    sound_effects:
-      progress: true
-      completion: true
-
-  # Quest Templates
-  templates:
-    boss_slayer:
-      name: Boss Slayer
-      description: Defeat the dungeon boss to claim your reward
-      type: KILL
-      required_amount: 1
-      target_entity: BOSS
-      reward_commands:
-        - give %player% diamond 5
-        - xp add %player% 500
-      reward_messages:
-        - You have defeated the dungeon boss!
-        - The cursed spirits can now rest.
-      reward_items:
-        - DIAMOND:5
-        - EXPERIENCE_BOTTLE:10
-        
-    treasure_hunter:
-      name: Treasure Hunter
-      description: Collect the lost artifacts scattered throughout the dungeon
-      type: COLLECT
-      required_amount: 3
-      target_item: EMERALD
-      reward_commands:
-        - give %player% gold_ingot 10
-        - xp add %player% 300
-      reward_messages:
-        - You have collected all the lost artifacts!
-        - Your archaeological skills are impressive.
-      reward_items:
-        - GOLD_INGOT:10
-        - ENCHANTED_BOOK:1
-        
-    dungeon_explorer:
-      name: Dungeon Explorer
-      description: Discover the hidden treasure chambers of the dungeon
-      type: EXPLORE
-      required_amount: 2
-      reward_commands:
-        - give %player% iron_ingot 15
-        - xp add %player% 200
-      reward_messages:
-        - You have explored the dungeon thoroughly!
-        - Your cartography skills are impressive.
-      reward_items:
-        - MAP:1
-        - COMPASS:1
-        - IRON_INGOT:15
-        
-    monster_hunter:
-      name: Monster Hunter
-      description: Cleanse the dungeon of its monstrous inhabitants
-      type: KILL
-      required_amount: 15
-      target_entity: ZOMBIE
-      reward_commands:
-        - give %player% experience_bottle 5
-        - xp add %player% 250
-      reward_messages:
-        - You have cleansed the dungeon of monsters!
-        - The dungeon is now safer thanks to your efforts.
-      reward_items:
-        - EXPERIENCE_BOTTLE:5
-        - GOLDEN_APPLE:2
-        
-    arcane_collector:
-      name: Arcane Collector
-      description: Collect magical essence crystals from the dungeon
-      type: COLLECT
-      required_amount: 5
-      target_item: AMETHYST_SHARD
-      reward_commands:
-        - give %player% glowstone 10
-        - xp add %player% 350
-      reward_messages:
-        - You have collected all the magical essence crystals!
-        - Your understanding of the arcane has increased.
-      reward_items:
-        - EXPERIENCE_BOTTLE:7
-        - ENCHANTED_BOOK:1
-        - GLOWSTONE:10
-        
-  # Biome-specific quests
-  biome_quests:
-    DESERT:
-      - boss_slayer
-      - treasure_hunter
-    FOREST:
-      - monster_hunter
-      - dungeon_explorer
-    MOUNTAINS:
-      - boss_slayer
-      - arcane_collector
-    OCEAN:
-      - treasure_hunter
-      - dungeon_explorer
-    default:
-      - monster_hunter
-      - boss_slayer
