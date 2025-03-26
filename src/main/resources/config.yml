@@ -187,6 +187,135 @@ themes:
       - TELEPORTER
       - GUARDIAN_TRAP
 
+  WITCH_HUT:
+    primary-blocks:
+      - DARK_OAK_PLANKS
+      - DARK_OAK_LOG
+      - STRIPPED_DARK_OAK_LOG
+    accent-blocks:
+      - CAULDRON
+      - COBWEB
+      - MUSHROOM_STEM
+    floor-blocks:
+      - DARK_OAK_PLANKS
+      - MOSS_BLOCK
+      - MOSSY_COBBLESTONE
+    ceiling-blocks:
+      - DARK_OAK_PLANKS
+      - DARK_OAK_WOOD
+    light-blocks:
+      - SOUL_LANTERN
+      - CANDLE
+      - SOUL_TORCH
+    treasure-chance: 0.65
+    traps:
+      - POISON_GAS
+      - PIT
+      - TELEPORTER
+
+  VILLAGE_RUINS:
+    primary-blocks:
+      - COBBLESTONE
+      - OAK_PLANKS
+      - BRICKS
+    accent-blocks:
+      - FLOWER_POT
+      - BOOKSHELF
+      - CRAFTING_TABLE
+    floor-blocks:
+      - OAK_PLANKS
+      - COBBLESTONE
+      - COARSE_DIRT
+    ceiling-blocks:
+      - OAK_PLANKS
+      - OAK_WOOD
+    light-blocks:
+      - LANTERN
+      - TORCH
+    treasure-chance: 0.55
+    traps:
+      - ARROW
+      - PIT
+      - CAVE_IN
+
+  TRIBAL_SHRINE:
+    primary-blocks:
+      - TERRACOTTA
+      - ACACIA_PLANKS
+      - ACACIA_LOG
+    accent-blocks:
+      - ORANGE_TERRACOTTA
+      - RED_TERRACOTTA
+      - YELLOW_TERRACOTTA
+    floor-blocks:
+      - TERRACOTTA
+      - RED_SAND
+      - COARSE_DIRT
+    ceiling-blocks:
+      - ACACIA_PLANKS
+      - TERRACOTTA
+    light-blocks:
+      - TORCH
+      - FIRE
+      - CAMPFIRE
+    treasure-chance: 0.7
+    traps:
+      - FLAME_JET
+      - ARROW
+      - PIT
+
+  SUNKEN_TEMPLE:
+    primary-blocks:
+      - MOSSY_STONE_BRICKS
+      - MOSSY_COBBLESTONE
+      - CRACKED_STONE_BRICKS
+    accent-blocks:
+      - LILY_PAD
+      - VINES
+      - CHISELED_STONE_BRICKS
+    floor-blocks:
+      - MOSSY_STONE_BRICKS
+      - MOSS_BLOCK
+      - MUD
+    ceiling-blocks:
+      - MOSSY_STONE_BRICKS
+      - STONE_BRICKS
+    light-blocks:
+      - SHROOMLIGHT
+      - SEA_PICKLE
+      - SOUL_LANTERN
+    treasure-chance: 0.75
+    traps:
+      - POISON_GAS
+      - PIT
+      - TELEPORTER
+
+  TEMPLE:
+    primary-blocks:
+      - MOSSY_COBBLESTONE
+      - MOSSY_STONE_BRICKS
+      - JUNGLE_PLANKS
+    accent-blocks:
+      - CHISELED_STONE_BRICKS
+      - GOLD_BLOCK
+      - LAPIS_BLOCK
+    floor-blocks:
+      - MOSSY_STONE_BRICKS
+      - MOSSY_COBBLESTONE
+      - JUNGLE_PLANKS
+    ceiling-blocks:
+      - MOSSY_STONE_BRICKS
+      - JUNGLE_PLANKS
+    light-blocks:
+      - LANTERN
+      - TORCH
+      - GLOWSTONE
+    treasure-chance: 0.8
+    traps:
+      - ARROW
+      - PIT
+      - FLAME_JET
+      - CAVE_IN
 # Trap Settings
 traps:
   enabled: true
