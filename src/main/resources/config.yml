@@ -387,7 +387,7 @@ themes:
       - CRACKED_STONE_BRICKS
     accent-blocks:
       - LILY_PAD
-      - VINES
+      - WEEPING_VINES
       - CHISELED_STONE_BRICKS
     floor-blocks:
       - MOSSY_STONE_BRICKS
