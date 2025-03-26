@@ -3,6 +3,7 @@ package com.ubivismedia.aidungeon.commands;
 import com.ubivismedia.aidungeon.AIDungeonGenerator;
 import com.ubivismedia.aidungeon.dungeons.BiomeArea;
 import com.ubivismedia.aidungeon.dungeons.DungeonManager;
+import com.ubivismedia.aidungeon.localization.LanguageManager;
 import com.ubivismedia.aidungeon.storage.DungeonData;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -61,42 +62,41 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
      * Send help information to a player
      */
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(ChatColor.GOLD + "=== AI Dungeon Generator Commands ===");
-        sender.sendMessage(ChatColor.YELLOW + "/aidungeon generate" + ChatColor.WHITE + " - Generate a dungeon at your location");
-        sender.sendMessage(ChatColor.YELLOW + "/aidungeon info" + ChatColor.WHITE + " - Show information about nearby dungeons");
-        sender.sendMessage(ChatColor.YELLOW + "/aidungeon list" + ChatColor.WHITE + " - List all generated dungeons");
-        sender.sendMessage(ChatColor.YELLOW + "/aidungeon tp <id>" + ChatColor.WHITE + " - Teleport to a dungeon by ID");
-        sender.sendMessage(ChatColor.YELLOW + "/aidungeon reload" + ChatColor.WHITE + " - Reload the plugin configuration");
+        LanguageManager lang = plugin.getLanguageManager();
+        sender.sendMessage(lang.getMessage("dungeon.help.header"));
+        sender.sendMessage(lang.getMessage("dungeon.help.generate"));
+        sender.sendMessage(lang.getMessage("dungeon.help.info"));
+        sender.sendMessage(lang.getMessage("dungeon.help.list"));
+        sender.sendMessage(lang.getMessage("dungeon.help.tp"));
+        sender.sendMessage(lang.getMessage("dungeon.help.reload"));
     }
     
     /**
      * Handle the generate command
      */
     private boolean handleGenerate(CommandSender sender, String[] args) {
+        LanguageManager lang = plugin.getLanguageManager();
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "This command can only be used by players.");
+            sender.sendMessage(lang.getMessage("dungeon.errors.player_only"));
             return true;
         }
-        
+
         Player player = (Player) sender;
-        
+
         if (!player.hasPermission("aidungeon.admin")) {
-            player.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+            player.sendMessage(lang.getMessage("dungeon.errors.no_permission"));
             return true;
         }
-        
-        // Create a biome area at the player's location
+
         BiomeArea area = BiomeArea.fromLocation(player.getLocation(), 100);
-        
-        // Check if already generated
+
         if (!dungeonManager.canGenerateDungeon(player, area)) {
-            player.sendMessage(ChatColor.RED + "A dungeon already exists in this area or you are in a blacklisted world.");
+            player.sendMessage(lang.getMessage("dungeon.generate.exists"));
             return true;
         }
-        
-        // Queue generation
+
         dungeonManager.queueDungeonGeneration(area, player);
-        player.sendMessage(ChatColor.GREEN + "Generating dungeon in " + area.getPrimaryBiome() + " biome...");
+        player.sendMessage(lang.getMessage("dungeon.generate.queued", area.getPrimaryBiome()));
         return true;
     }
     
@@ -104,76 +104,70 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
      * Handle the info command
      */
     private boolean handleInfo(CommandSender sender) {
+        LanguageManager lang = plugin.getLanguageManager();
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "This command can only be used by players.");
+            sender.sendMessage(lang.getMessage("dungeon.errors.player_only"));
             return true;
         }
-        
+
         Player player = (Player) sender;
-        
-        // Get all dungeons
         Map<BiomeArea, DungeonData> dungeons = dungeonManager.getAllDungeons();
-        
+
         if (dungeons.isEmpty()) {
-            player.sendMessage(ChatColor.YELLOW + "No dungeons have been generated yet.");
+            player.sendMessage(lang.getMessage("dungeon.info.no_dungeons"));
             return true;
         }
-        
+
         Location playerLoc = player.getLocation();
         boolean foundNearby = false;
-        
-        // Check for nearby dungeons
+
         for (Map.Entry<BiomeArea, DungeonData> entry : dungeons.entrySet()) {
             BiomeArea area = entry.getKey();
             DungeonData data = entry.getValue();
-            
-            // Skip if not in the same world
+
             if (!area.getWorldName().equals(playerLoc.getWorld().getName())) {
                 continue;
             }
-            
-            // Calculate distance
+
             double distance = Math.sqrt(
                     Math.pow(area.getCenterX() - playerLoc.getBlockX(), 2) +
-                    Math.pow(area.getCenterZ() - playerLoc.getBlockZ(), 2)
+                            Math.pow(area.getCenterZ() - playerLoc.getBlockZ(), 2)
             );
-            
-            // Show info if within 500 blocks
+
             if (distance <= 500) {
-                player.sendMessage(ChatColor.GOLD + "=== Nearby Dungeon ===");
-                player.sendMessage(ChatColor.YELLOW + "Theme: " + ChatColor.WHITE + data.getTheme().getName());
-                player.sendMessage(ChatColor.YELLOW + "Biome: " + ChatColor.WHITE + area.getPrimaryBiome());
-                player.sendMessage(ChatColor.YELLOW + "Location: " + ChatColor.WHITE + 
-                        "X:" + area.getCenterX() + ", Z:" + area.getCenterZ());
-                player.sendMessage(ChatColor.YELLOW + "Distance: " + ChatColor.WHITE + 
-                        String.format("%.1f", distance) + " blocks");
-                player.sendMessage(ChatColor.YELLOW + "ID: " + ChatColor.WHITE + 
-                        area.getWorldName() + ":" + area.getCenterX() + ":" + area.getCenterZ());
-                
+                player.sendMessage(lang.getMessage("dungeon.info.nearby_header"));
+                player.sendMessage(lang.getMessage("dungeon.info.theme", data.getTheme().getName()));
+                player.sendMessage(lang.getMessage("dungeon.info.biome", area.getPrimaryBiome()));
+                player.sendMessage(lang.getMessage("dungeon.info.location", area.getCenterX(), area.getCenterZ()));
+                player.sendMessage(lang.getMessage("dungeon.info.distance", String.format("%.1f", distance)));
+                player.sendMessage(lang.getMessage("dungeon.info.id", area.getWorldName(), area.getCenterX(), area.getCenterZ()));
+
                 foundNearby = true;
             }
         }
-        
+
         if (!foundNearby) {
-            player.sendMessage(ChatColor.YELLOW + "No dungeons within 500 blocks of your location.");
+            player.sendMessage(lang.getMessage("dungeon.info.no_nearby"));
         }
-        
+
         return true;
     }
-    
+
+
     /**
      * Handle the reload command
      */
     private boolean handleReload(CommandSender sender) {
+        LanguageManager lang = plugin.getLanguageManager();
         if (!sender.hasPermission("aidungeon.admin")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+            sender.sendMessage(lang.getMessage("dungeon.errors.no_permission"));
             return true;
         }
-        
+
         plugin.reloadConfig();
         plugin.getConfigManager().loadConfig();
-        
-        sender.sendMessage(ChatColor.GREEN + "AI Dungeon Generator configuration reloaded.");
+
+        sender.sendMessage(lang.getMessage("dungeon.reload.success"));
         return true;
     }
     
@@ -181,38 +175,40 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
      * Handle the list command
      */
     private boolean handleList(CommandSender sender) {
+        LanguageManager lang = plugin.getLanguageManager();
         if (!sender.hasPermission("aidungeon.admin")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+            sender.sendMessage(lang.getMessage("dungeon.errors.no_permission"));
             return true;
         }
-        
-        // Get all dungeons
+
         Map<BiomeArea, DungeonData> dungeons = dungeonManager.getAllDungeons();
-        
+
         if (dungeons.isEmpty()) {
-            sender.sendMessage(ChatColor.YELLOW + "No dungeons have been generated yet.");
+            sender.sendMessage(lang.getMessage("dungeon.list.no_dungeons"));
             return true;
         }
-        
-        sender.sendMessage(ChatColor.GOLD + "=== Generated Dungeons ===");
-        
+
+        sender.sendMessage(lang.getMessage("dungeon.list.header"));
+
         int count = 0;
         for (Map.Entry<BiomeArea, DungeonData> entry : dungeons.entrySet()) {
             BiomeArea area = entry.getKey();
             DungeonData data = entry.getValue();
-            
-            sender.sendMessage(ChatColor.YELLOW + "" + (++count) + ". " + 
-                    ChatColor.WHITE + area.getWorldName() + " [" + 
-                    area.getCenterX() + ", " + area.getCenterZ() + "] - " + 
-                    ChatColor.AQUA + data.getTheme().getName());
-            
-            // Limit to 10 dungeons per page
+
+            sender.sendMessage(lang.getMessage("dungeon.list.entry",
+                    ++count,
+                    area.getWorldName(),
+                    area.getCenterX(),
+                    area.getCenterZ(),
+                    data.getTheme().getName()
+            ));
+
             if (count >= 10) {
-                sender.sendMessage(ChatColor.YELLOW + "Use /aidungeon list <page> to see more dungeons.");
+                sender.sendMessage(lang.getMessage("dungeon.list.more"));
                 break;
             }
         }
-        
+
         return true;
     }
     

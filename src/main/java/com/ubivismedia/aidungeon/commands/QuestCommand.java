@@ -1,6 +1,7 @@
 package com.ubivismedia.aidungeon.commands;
 
 import com.ubivismedia.aidungeon.AIDungeonGenerator;
+import com.ubivismedia.aidungeon.localization.LanguageManager;
 import com.ubivismedia.aidungeon.quests.Quest;
 import com.ubivismedia.aidungeon.quests.QuestSystem;
 import com.ubivismedia.aidungeon.quests.QuestDisplayManager;
@@ -155,12 +156,13 @@ public class QuestCommand implements CommandExecutor, TabCompleter {
      * Show command help
      */
     private void showHelp(Player player) {
-        player.sendMessage(ChatColor.GOLD + "==== Quest Commands ====");
-        player.sendMessage(ChatColor.YELLOW + "/quests" + ChatColor.WHITE + " - Show your active quests");
-        player.sendMessage(ChatColor.YELLOW + "/quests details <id>" + ChatColor.WHITE + " - Show detailed information about a quest");
-        player.sendMessage(ChatColor.YELLOW + "/quests track <id>" + ChatColor.WHITE + " - Get a compass that tracks this quest");
-        player.sendMessage(ChatColor.YELLOW + "/quests claim <id>" + ChatColor.WHITE + " - Claim rewards for a completed quest");
-        player.sendMessage(ChatColor.YELLOW + "/quests abandon <id>" + ChatColor.WHITE + " - Abandon a quest");
+        LanguageManager lang = plugin.getLanguageManager();
+        player.sendMessage(lang.getMessage("quest.help.header"));
+        player.sendMessage(lang.getMessage("quest.help.list"));
+        player.sendMessage(lang.getMessage("quest.help.details"));
+        player.sendMessage(lang.getMessage("quest.help.track"));
+        player.sendMessage(lang.getMessage("quest.help.claim"));
+        player.sendMessage(lang.getMessage("quest.help.abandon"));
 
         if (player.hasPermission("aidungeon.admin")) {
             player.sendMessage(ChatColor.YELLOW + "/quests reload" + ChatColor.WHITE + " - Reload quest system");

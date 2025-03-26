@@ -4,6 +4,7 @@ import com.ubivismedia.aidungeon.AIDungeonGenerator;
 import com.ubivismedia.aidungeon.dungeons.BiomeArea;
 import com.ubivismedia.aidungeon.dungeons.BiomeTracker;
 import com.ubivismedia.aidungeon.dungeons.DungeonManager;
+import com.ubivismedia.aidungeon.localization.LanguageManager;
 import com.ubivismedia.aidungeon.quests.QuestSystem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -51,6 +52,7 @@ public class PlayerMoveListener implements Listener {
 
         // If a new biome area was detected
         if (newArea != null) {
+            LanguageManager lang = plugin.getLanguageManager();
             // Track biome exploration
             double explorationPercentage = plugin.getBiomeExplorationTracker().recordExploredChunk(
                     player,
@@ -79,10 +81,12 @@ public class PlayerMoveListener implements Listener {
 
                 // Debug message to player if enabled
                 if (plugin.getConfig().getBoolean("settings.debug-mode", false)) {
-                    player.sendMessage("§7[Debug] Dungeon generation queued in "
-                            + newArea.getPrimaryBiome() + " at "
-                            + newArea.getCenterX() + "," + newArea.getCenterZ() +
-                            " (Exploration: " + String.format("%.1f%%", explorationPercentage * 100) + ")");
+                    player.sendMessage(lang.getMessage("dungeon.debug_generation",
+                            newArea.getPrimaryBiome(),
+                            newArea.getCenterX(),
+                            newArea.getCenterZ(),
+                            String.format("%.1f", explorationPercentage * 100)
+                    ));
                 }
             } else {
                 // Check if entering an existing dungeon

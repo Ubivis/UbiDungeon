@@ -3,6 +3,7 @@ package com.ubivismedia.aidungeon.handlers;
 import com.ubivismedia.aidungeon.AIDungeonGenerator;
 import com.ubivismedia.aidungeon.dungeons.BiomeArea;
 import com.ubivismedia.aidungeon.dungeons.DungeonManager;
+import com.ubivismedia.aidungeon.localization.LanguageManager;
 import com.ubivismedia.aidungeon.storage.DungeonData;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -41,7 +42,7 @@ public class TrapHandler implements Listener {
     
     // Trap cooldown (in milliseconds)
     private static final long TRAP_COOLDOWN = 60000; // 1 minute
-    
+
     // Defines trap types available in the plugin
     public enum TrapType {
         ARROW,
@@ -210,6 +211,7 @@ public class TrapHandler implements Listener {
      * Trigger a warden summon trap
      */
     private void triggerWardenSummonTrap(Player player, Location location) {
+        LanguageManager lang = plugin.getLanguageManager();
         // Get config values
         double summonChance = plugin.getConfig().getDouble("traps.types.WARDEN_SUMMON.summon_chance", 0.7);
         int warningSounds = plugin.getConfig().getInt("traps.types.WARDEN_SUMMON.warning_sounds", 3);
@@ -228,7 +230,7 @@ public class TrapHandler implements Listener {
                 // Alert nearby players
                 for (Player nearby : location.getWorld().getPlayers()) {
                     if (nearby.getLocation().distance(location) <= 15) {
-                        nearby.sendMessage(ChatColor.DARK_PURPLE + "You hear an unsettling noise from the depths...");
+                        nearby.sendMessage(lang.getMessage("trap.warden_warning"));
                     }
                 }
             }, delay);
@@ -252,7 +254,7 @@ public class TrapHandler implements Listener {
                 // Send message to all nearby players
                 for (Player nearby : location.getWorld().getPlayers()) {
                     if (nearby.getLocation().distance(location) <= 30) {
-                        nearby.sendMessage(ChatColor.DARK_RED + "The Warden has been summoned!");
+                        player.sendMessage(lang.getMessage("trap.warden_disturbance"));
                     }
                 }
 
@@ -268,13 +270,14 @@ public class TrapHandler implements Listener {
         }, warningSounds * 20 + 40); // Extra 2 seconds after warnings
 
         // Notification
-        player.sendMessage(ChatColor.DARK_PURPLE + "You've disturbed something ancient...");
+        player.sendMessage(lang.getMessage("trap.ancient_disturbance"));
     }
 
     /**
      * Trigger a sculk shrieker trap
      */
     private void triggerSculkShriekerTrap(Player player, Location location) {
+        LanguageManager lang = plugin.getLanguageManager();
         // Get config values
         int shriekCount = plugin.getConfig().getInt("traps.types.SCULK_SHRIEKER.shriek_count", 3);
         int radius = plugin.getConfig().getInt("traps.types.SCULK_SHRIEKER.radius", 5);
@@ -312,7 +315,7 @@ public class TrapHandler implements Listener {
                     // Get and warn all players in range
                     for (Player nearby : location.getWorld().getPlayers()) {
                         if (nearby.getLocation().distance(location) <= radius * 2) {
-                            nearby.sendMessage(ChatColor.DARK_PURPLE + "A sculk shrieker cries out!");
+                            nearby.sendMessage(lang.getMessage("trap.ancient_warning"));
                         }
                     }
                 }
@@ -331,7 +334,7 @@ public class TrapHandler implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 200, 0)); // 10 seconds of darkness
 
         // Notification
-        player.sendMessage(ChatColor.DARK_PURPLE + "You've activated a sculk shrieker!");
+        player.sendMessage(lang.getMessage("trap.ancient_disturbance"));
     }
     
     /**
@@ -389,29 +392,23 @@ public class TrapHandler implements Listener {
      * Trigger an arrow trap
      */
     private void triggerArrowTrap(Player player, Location location) {
-        // Play sound effect
+        LanguageManager lang = plugin.getLanguageManager();
         location.getWorld().playSound(location, Sound.ENTITY_ARROW_SHOOT, 1.0f, 1.0f);
-        
-        // Find direction facing player
-        Vector direction = player.getLocation().subtract(location).toVector().normalize();
-        
-        // Spawn particles
         location.getWorld().spawnParticle(Particle.CRIT, location, 20, 0.5, 0.5, 0.5, 0.1);
-        
-        // Deal damage to player
-        player.damage(4.0); // 2 hearts of damage
-        
-        // Knockback effect
+
+        player.damage(4.0);
+
+        Vector direction = player.getLocation().subtract(location).toVector().normalize();
         player.setVelocity(direction.multiply(0.5));
-        
-        // Notification
-        player.sendMessage("§c§oYou triggered an arrow trap!");
+
+        player.sendMessage(lang.getMessage("trap.arrow.triggered"));
     }
     
     /**
      * Trigger a pit trap
      */
     private void triggerPitTrap(Player player, Location location) {
+        LanguageManager lang = plugin.getLanguageManager();
         // Break blocks beneath the player
         Block block = location.getBlock().getRelative(BlockFace.DOWN);
         Material originalType = block.getType();
@@ -448,7 +445,7 @@ public class TrapHandler implements Listener {
         }
         
         // Notification
-        player.sendMessage("§c§oThe floor gives way beneath you!");
+        player.sendMessage(lang.getMessage("trap.pit.triggered"));
         
         // Restore after a delay
         new BukkitRunnable() {
@@ -503,6 +500,7 @@ public class TrapHandler implements Listener {
      * Trigger a lava trap
      */
     private void triggerLavaTrap(Player player, Location location) {
+        LanguageManager lang = plugin.getLanguageManager();
         // Play sound
         location.getWorld().playSound(location, Sound.BLOCK_LAVA_POP, 1.0f, 1.0f);
         
@@ -521,7 +519,7 @@ public class TrapHandler implements Listener {
         }
         
         // Notification
-        player.sendMessage("§c§oLava erupts from hidden vents in the floor!");
+        player.sendMessage(lang.getMessage("trap.lava.triggered"));
         
         // Clear lava after a delay
         new BukkitRunnable() {
@@ -542,6 +540,7 @@ public class TrapHandler implements Listener {
      * Trigger a poison gas trap
      */
     private void triggerPoisonGasTrap(Player player, Location location) {
+        LanguageManager lang = plugin.getLanguageManager();
         // Play sound
         location.getWorld().playSound(location, Sound.BLOCK_FIRE_EXTINGUISH, 1.0f, 0.5f);
         
@@ -558,18 +557,19 @@ public class TrapHandler implements Listener {
                 Player nearbyPlayer = (Player) entity;
                 nearbyPlayer.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 200, 1));
                 nearbyPlayer.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 300, 0));
-                nearbyPlayer.sendMessage("§c§oYou breathe in poisonous gas!");
+                nearbyPlayer.sendMessage(lang.getMessage("trap.poison_gas.nearby_triggered"));
             }
         }
         
         // Notification
-        player.sendMessage("§c§oPoisonous gas fills the air!");
+        player.sendMessage(lang.getMessage("trap.poison_gas.triggered"));
     }
     
     /**
      * Trigger a cave-in trap
      */
     private void triggerCaveInTrap(Player player, Location location) {
+        LanguageManager lang = plugin.getLanguageManager();
         // Play sound
         location.getWorld().playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 0.5f);
         
@@ -612,7 +612,7 @@ public class TrapHandler implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 2)); // 5 seconds of slowness
         
         // Notification
-        player.sendMessage("§c§oThe ceiling collapses above you!");
+        player.sendMessage(lang.getMessage("trap.cave_in.triggered"));
         
         // Restore original blocks after a delay
         new BukkitRunnable() {
@@ -631,6 +631,7 @@ public class TrapHandler implements Listener {
      * Trigger a flame jet trap
      */
     private void triggerFlameJetTrap(Player player, Location location) {
+        LanguageManager lang = plugin.getLanguageManager();
         // Play sound
         location.getWorld().playSound(location, Sound.ENTITY_BLAZE_SHOOT, 1.0f, 1.0f);
         
@@ -676,13 +677,14 @@ public class TrapHandler implements Listener {
         }.runTaskTimer(plugin, 0L, 5L); // Every 1/4 second for 5 seconds
         
         // Notification
-        player.sendMessage("§c§oJets of flame burst from the floor!");
+        player.sendMessage(lang.getMessage("trap.flame_jet.triggered"));
     }
     
     /**
      * Trigger a teleporter trap
      */
     private void triggerTeleporterTrap(Player player, Location location) {
+        LanguageManager lang = plugin.getLanguageManager();
         // Play sound
         location.getWorld().playSound(location, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
         
@@ -739,7 +741,7 @@ public class TrapHandler implements Listener {
                 }.runTaskLater(plugin, 20L); // 1 second delay
                 
                 // Notification
-                player.sendMessage("§c§oYou triggered a teleportation trap!");
+                player.sendMessage(lang.getMessage("trap.teleporter.triggered"));
             }
         }
     }
@@ -748,6 +750,7 @@ public class TrapHandler implements Listener {
      * Trigger a freezing trap
      */
     private void triggerFreezingTrap(Player player, Location location) {
+        LanguageManager lang = plugin.getLanguageManager();
         // Play sound
         location.getWorld().playSound(location, Sound.BLOCK_GLASS_BREAK, 1.0f, 2.0f);
         
@@ -781,7 +784,7 @@ public class TrapHandler implements Listener {
         }
         
         // Notification
-        player.sendMessage("§c§oA freezing chill surrounds you!");
+        player.sendMessage(lang.getMessage("trap.freezing.triggered"));
         
         // Melt ice/snow after a delay
         new BukkitRunnable() {

@@ -4,6 +4,7 @@ import com.ubivismedia.aidungeon.AIDungeonGenerator;
 import com.ubivismedia.aidungeon.dungeons.BiomeArea;
 import com.ubivismedia.aidungeon.config.DungeonTheme;
 import com.ubivismedia.aidungeon.storage.DungeonData;
+import com.ubivismedia.aidungeon.localization.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -39,7 +40,7 @@ public class QuestSystem implements Listener {
 
     private final AIDungeonGenerator plugin;
     private final Random random = new Random();
-    
+
     // Quest related keys for persistent data
     private final NamespacedKey questItemKey;
     private final NamespacedKey questKillKey;
@@ -56,7 +57,7 @@ public class QuestSystem implements Listener {
     
     public QuestSystem(AIDungeonGenerator plugin) {
         this.plugin = plugin;
-        
+
         // Initialize keys
         this.questItemKey = new NamespacedKey(plugin, "quest_item");
         this.questKillKey = new NamespacedKey(plugin, "quest_kill");
@@ -975,20 +976,21 @@ public class QuestSystem implements Listener {
      * Show quest status to a player
      */
     public void showQuestStatus(Player player) {
+        LanguageManager lang = plugin.getLanguageManager();
         List<Quest> quests = getPlayerQuests(player.getUniqueId());
-        
+
         if (quests.isEmpty()) {
-            player.sendMessage(ChatColor.YELLOW + "You don't have any active quests.");
+            player.sendMessage(lang.getMessage("quest.status.no_quests"));
             return;
         }
-        
-        player.sendMessage(ChatColor.GOLD + "==== Your Quests ====");
-        
+
+        player.sendMessage(lang.getMessage("quest.status.header"));
+
         // Group by completed status
         List<Quest> activeQuests = new ArrayList<>();
         List<Quest> completedQuests = new ArrayList<>();
         List<Quest> claimedQuests = new ArrayList<>();
-        
+
         for (Quest quest : quests) {
             if (quest.isRewardClaimed()) {
                 claimedQuests.add(quest);
@@ -998,34 +1000,41 @@ public class QuestSystem implements Listener {
                 activeQuests.add(quest);
             }
         }
-        
+
         // Show active quests
         if (!activeQuests.isEmpty()) {
-            player.sendMessage(ChatColor.YELLOW + "Active Quests:");
+            player.sendMessage(lang.getMessage("quest.status.active_header"));
             for (Quest quest : activeQuests) {
                 QuestTemplate template = quest.getTemplate();
-                player.sendMessage(ChatColor.WHITE + " - " + template.getName() + ChatColor.GRAY + 
-                                  " (" + quest.getProgress() + "/" + template.getRequiredAmount() + ")" + 
-                                  ChatColor.ITALIC + " " + template.getDescription());
+                player.sendMessage(lang.getMessage("quest.status.active_format",
+                        template.getName(),
+                        quest.getProgress(),
+                        template.getRequiredAmount(),
+                        template.getDescription()
+                ));
             }
         }
-        
+
         // Show completed quests
         if (!completedQuests.isEmpty()) {
-            player.sendMessage(ChatColor.GREEN + "Completed Quests (Rewards Available):");
+            player.sendMessage(lang.getMessage("quest.status.completed_header"));
             for (Quest quest : completedQuests) {
                 QuestTemplate template = quest.getTemplate();
-                player.sendMessage(ChatColor.WHITE + " - " + template.getName() + ChatColor.GREEN + 
-                                  " (COMPLETED)" + ChatColor.GRAY + " Use /quests claim " + quest.getId());
+                player.sendMessage(lang.getMessage("quest.status.completed_format",
+                        template.getName(),
+                        quest.getId()
+                ));
             }
         }
-        
+
         // Show claimed quests
         if (!claimedQuests.isEmpty() && plugin.getConfig().getBoolean("quests.show_claimed", false)) {
-            player.sendMessage(ChatColor.GRAY + "Claimed Quests:");
+            player.sendMessage(lang.getMessage("quest.status.claimed_header"));
             for (Quest quest : claimedQuests) {
                 QuestTemplate template = quest.getTemplate();
-                player.sendMessage(ChatColor.GRAY + " - " + template.getName() + " (CLAIMED)");
+                player.sendMessage(lang.getMessage("quest.status.claimed_format",
+                        template.getName()
+                ));
             }
         }
     }

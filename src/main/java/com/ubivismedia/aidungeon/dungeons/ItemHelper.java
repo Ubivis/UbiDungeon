@@ -23,6 +23,7 @@ public class ItemHelper {
      * Create and give a dungeon compass to a player
      */
     public static void giveDungeonCompass(AIDungeonGenerator plugin, Player player, BiomeArea area) {
+        LanguageManager lang = plugin.getLanguageManager();
         ItemStack compass = createDungeonCompass(plugin, area);
         
         // Add to player inventory or drop at player location
@@ -30,7 +31,7 @@ public class ItemHelper {
             player.getInventory().addItem(compass);
         } else {
             player.getWorld().dropItem(player.getLocation(), compass);
-            player.sendMessage(ChatColor.YELLOW + "Your inventory was full, so the dungeon compass was dropped at your feet.");
+            player.sendMessage(lang.getMessage("compass.inventory_full"));
         }
     }
 
@@ -88,8 +89,8 @@ public class ItemHelper {
 
             // Add lore
             List<String> lore = new ArrayList<>();
-            lore.add(lang.getMessage("compass.lore.0", area.getPrimaryBiome().toString()));
-            lore.add(lang.getMessage("compass.lore.1", area.getCenterX(), area.getCenterZ()));
+            lore.add(lang.getMessage("compass.lore.biome", area.getPrimaryBiome().toString()));
+            lore.add(lang.getMessage("compass.lore.location", area.getCenterX(), area.getCenterZ()));
             meta.setLore(lore);
 
             // Add persistent data

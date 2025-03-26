@@ -1,11 +1,10 @@
 # Dungeon Compass Messages
 compass:
   name: "§6Dungeon Compass"
+  inventory_full: "§eYour inventory was full, so the dungeon compass was dropped at your feet."
   lore:
-    - "§7Points to a dungeon in a"
-    - "§7{0} biome"
-    - ""
-    - "§eLocation: §f{1}, {2}"
+    biome: "§7Points to a dungeon in a §f{0} biome"
+    location: "§eLocation: §f{0}, {1}"
 
 # Quest Messages
 quest:
@@ -17,6 +16,8 @@ quest:
     progress: "§6Progress: {0}{1}/{2} ({3}%)"
     completed_status: "§6Status: §a✓ COMPLETED §7- Use /quests claim {0}"
     active_status: "§6Status: §6⧗ IN PROGRESS"
+    usage: "§cUsage: /quests details <quest_id>"
+    not_found: "§cQuest not found."
 
   notification:
     new:
@@ -44,15 +45,119 @@ quest:
       COLLECT: "Collection"
       EXPLORE: "Exploration"
 
+  status:
+    no_quests: "§eYou don't have any active quests."
+    header: "§6==== Your Quests ===="
+    active_header: "§eActive Quests:"
+    active_format: "§f - {0} §7({1}/{2}) §8{3}"
+    completed_header: "§aCompleted Quests (Rewards Available):"
+    completed_format: "§f - {0} §a(COMPLETED) §7Use /quests claim {1}"
+    claimed_header: "§7Claimed Quests:"
+    claimed_format: "§7 - {0} (CLAIMED)"
+
   new: "§6New Quest: §f{0}"
   progress: "§eQuest Progress: §f{0}"
   completed: "§aQuest Completed: §f{0}"
   claim_hint: "§eUse /quests claim {0} for rewards!"
 
+  errors:
+    player_only: "§cThis command can only be used by players."
+
+  claim:
+    usage: "§cUsage: /quests claim <quest_id>"
+
+  abandon:
+    usage: "§cUsage: /quests abandon <quest_id>"
+    success: "§eQuest abandoned."
+    not_found: "§cQuest not found."
+
+  track:
+    usage: "§cUsage: /quests track <quest_id>"
+    not_found: "§cQuest not found."
+
+  reload:
+    no_permission: "§cYou don't have permission to reload quests."
+    success: "§aQuest system reloaded."
+
+  help:
+    header: "§6==== Quest Commands ===="
+    list: "§e/quests §7- Show your active quests"
+    details: "§e/quests details <id> §7- Show detailed quest information"
+    track: "§e/quests track <id> §7- Get a compass that tracks this quest"
+    claim: "§e/quests claim <id> §7- Claim rewards for a completed quest"
+    abandon: "§e/quests abandon <id> §7- Abandon a quest"
+
 # Dungeon Discovery Messages
 dungeon:
+  debug_generation: "§7[Debug] Dungeon generation queued in {0} at {1},{2} (Exploration: {3}%)"
   discovered: "§6You have discovered a {0} dungeon!"
   explore_hint: "§eExplore the area to find the entrance."
+
+  errors:
+    player_only: "§cThis command can only be used by players."
+    no_permission: "§cYou don't have permission to use this command."
+
+    help:
+      header: "§6=== AI Dungeon Generator Commands ==="
+      generate: "§e/aidungeon generate §f- Generate a dungeon at your location"
+      info: "§e/aidungeon info §f- Show information about nearby dungeons"
+      list: "§e/aidungeon list §f- List all generated dungeons"
+      tp: "§e/aidungeon tp <id> §f- Teleport to a dungeon by ID"
+      reload: "§e/aidungeon reload §f- Reload the plugin configuration"
+
+    generate:
+      exists: "§cA dungeon already exists in this area or you are in a blacklisted world."
+      queued: "§aGenerating dungeon in {0} biome..."
+
+    info:
+      no_dungeons: "§eNo dungeons have been generated yet."
+      nearby_header: "§6=== Nearby Dungeon ==="
+      theme: "§eTheme: §f{0}"
+      biome: "§eBiome: §f{0}"
+      location: "§eLocation: §fX:{0}, Z:{1}"
+      distance: "§eDistance: §f{0} blocks"
+      id: "§eID: §f{0}:{1}:{2}"
+      no_nearby: "§eNo dungeons within 500 blocks of your location."
+
+    list:
+      no_dungeons: "§eNo dungeons have been generated yet."
+      header: "§6=== Generated Dungeons ==="
+      entry: "§e{0}. §f{1} [{2}, {3}] - §b{4}"
+      more: "§eUse /aidungeon list <page> to see more dungeons."
+
+    reload:
+      success: "§aAI Dungeon Generator configuration reloaded."
+
+# Trap Messages
+trap:
+  activated: "§cYou've triggered a {0} trap!"
+  warden_warning: "§dYou hear an unsettling noise from the depths..."
+  warden_disturbance: "§dYou've disturbed the warden..."
+  ancient_warning: "A sculk shrieker cries out!"
+  ancient_disturbance: "§dYou've disturbed something ancient..."
+  arrow:
+    triggered: "§c§oYou triggered an arrow trap!"
+  pit:
+    triggered: "§c§oThe floor gives way beneath you!"
+  lava:
+    triggered: "§c§oLava erupts from hidden vents in the floor!"
+  poison_gas:
+    triggered: "§c§oPoisonous gas fills the air!"
+    nearby_triggered: "§c§oYou breathe in poisonous gas!"
+  cave_in:
+    triggered: "§c§oThe ceiling collapses above you!"
+  flame_jet:
+    triggered: "§c§oJets of flame burst from the floor!"
+  teleporter:
+    triggered: "§c§oYou triggered a teleportation trap!"
+  freezing:
+    triggered: "§c§oA freezing chill surrounds you!"
+  warden:
+    warning: "§dA warden has been summoned!"
+    triggered: "§d§oYou've disturbed something ancient..."
+  sculk_shrieker:
+    warning: "§dA sculk shrieker cries out!"
+    triggered: "§d§oYou've activated a sculk shrieker!"
 
 # Error Messages
 error:
