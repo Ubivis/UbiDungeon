@@ -89,12 +89,11 @@ quests:
 - **/quests abandon <id>** - Abandon a quest
 
 ## 🔒 Permissions
-
 - **aidungeon.admin** - Access to administrative commands (default: op)
 - **aidungeon.discover** - Allows players to discover dungeons (default: true)
 - **aidungeon.quest** - Allows players to use quest commands (default: true)
 
-- **🧠 How It Works**
+**🧠 How It Works**
 The plugin generates dungeons using three primary algorithms:
 
 - **Cellular Automata:** Creates the basic dungeon layout with rooms and corridors
