@@ -97,8 +97,8 @@ quests:
 The plugin generates dungeons using three primary algorithms:
 
 - **Cellular Automata:** Creates the basic dungeon layout with rooms and corridors
-Markov Chain Model: Determines room type transitions for a more natural feel
-Genetic Optimizer: Refines the dungeon for better playability and aesthetics
+- **Markov Chain Model:** Determines room type transitions for a more natural feel
+- **Genetic Optimizer:** Refines the dungeon for better playability and aesthetics
 
 The generation process considers the biome type to create theme-appropriate dungeons, with different block types, mob spawns, and trap systems.
 
