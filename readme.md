@@ -17,7 +17,7 @@ An advanced procedural dungeon generation plugin for Minecraft servers that uses
 
 ## 📥 Installation
 
-1. Download the plugin JAR from [Hangar](https://hangar.papermc.io/Ubivis/AI_Dungeon_Generator) [POLYMART]([https://modrinth.com/plugin/ai-dungeon-generator](https://polymart.org/resource/aidungeongenerator.7457)) or [modrinth](https://modrinth.com/plugin/ai-dungeon-generator)
+1. Download the plugin JAR from [Hangar](https://hangar.papermc.io/Ubivis/AI_Dungeon_Generator) [POLYMART](https://polymart.org/resource/aidungeongenerator.7457) or [modrinth](https://modrinth.com/plugin/ai-dungeon-generator)
 2. Place the JAR file in your server's `plugins` folder
 3. Restart your server
 4. The plugin will generate the default configuration files
