@@ -1,0 +1,461 @@
+# Generation Settings
+generation:
+  async:
+    enabled: true
+    tasks-per-tick: 2
+    max-concurrent-generations: 3
+  algorithm:
+    room-size:
+      min: 5
+      max: 15
+    corridor-length:
+      min: 3
+      max: 10
+    dungeon-size:
+      small: 25
+      medium: 40
+      large: 60
+    optimization-generations: 10
+
+# Discovery Settings
+discovery:
+  enable-compass: true
+  show-on-map: true
+  discovery-radius: 100
+  hint-message: true
+  exploration-threshold: 0.1  # 10% of a biome must be explored before generating a dungeon
+
+# Biome Theme Mappings
+biome-themes:
+  DESERT: "PYRAMID"
+  BADLANDS: "MINESHAFT"
+  FOREST: "RUINS"
+  DARK_FOREST: "WITCH_HUT"
+  PLAINS: "VILLAGE_RUINS"
+  MOUNTAINS: "DWARVEN_HALLS"
+  SAVANNA: "TRIBAL_SHRINE"
+  TAIGA: "ICE_CASTLE"
+  SWAMP: "SUNKEN_TEMPLE"
+  JUNGLE: "TEMPLE"
+  OCEAN: "UNDERWATER_RUINS"
+
+# Rewards
+rewards:
+  enable: true
+  common-items:
+    - IRON_INGOT:5
+    - GOLD_INGOT:3
+    - BREAD:10
+  rare-items:
+    - DIAMOND:2
+    - EMERALD:3
+    - ENCHANTED_BOOK:1
+  legendary-items:
+    - NETHERITE_INGOT:1
+    - TRIDENT:1
+    - ELYTRA:1
+  custom-items:
+    - name: "Ancient Sword"
+      material: DIAMOND_SWORD
+      enchantments:
+        - SHARPNESS:5
+        - FIRE_ASPECT:2
+      chance: 0.1
+
+# Dungeon Themes
+themes:
+  PYRAMID:
+    primary-blocks:
+      - SANDSTONE
+      - SMOOTH_SANDSTONE
+      - CUT_SANDSTONE
+    accent-blocks:
+      - GOLD_BLOCK
+      - CHISELED_SANDSTONE
+    floor-blocks:
+      - SANDSTONE
+      - SMOOTH_SANDSTONE
+    ceiling-blocks:
+      - SANDSTONE
+      - SMOOTH_SANDSTONE
+    light-blocks:
+      - TORCH
+      - LANTERN
+    treasure-chance: 0.7
+    traps:
+      - ARROW
+      - PIT
+      - LAVA
+
+  RUINS:
+    primary-blocks:
+      - COBBLESTONE
+      - MOSSY_COBBLESTONE
+      - STONE_BRICKS
+    accent-blocks:
+      - CRACKED_STONE_BRICKS
+      - MOSSY_STONE_BRICKS
+    floor-blocks:
+      - COBBLESTONE
+      - DIRT
+      - GRAVEL
+    ceiling-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+    light-blocks:
+      - TORCH
+    treasure-chance: 0.5
+    traps:
+      - ARROW
+      - PIT
+      - CAVE_IN
+  WITCH_HUT:
+    primary-blocks:
+      - DARK_OAK_PLANKS
+      - DARK_OAK_LOG
+      - STRIPPED_DARK_OAK_LOG
+    accent-blocks:
+      - CAULDRON
+      - COBWEB
+      - MUSHROOM_STEM
+    floor-blocks:
+      - DARK_OAK_PLANKS
+      - MOSS_BLOCK
+      - MOSSY_COBBLESTONE
+    ceiling-blocks:
+      - DARK_OAK_PLANKS
+      - DARK_OAK_WOOD
+    light-blocks:
+      - SOUL_LANTERN
+      - CANDLE
+      - SOUL_TORCH
+    treasure-chance: 0.65
+    traps:
+      - POISON_GAS
+      - PIT
+      - TELEPORTER
+  VILLAGE_RUINS:
+    primary-blocks:
+      - COBBLESTONE
+      - OAK_PLANKS
+      - BRICKS
+    accent-blocks:
+      - FLOWER_POT
+      - BOOKSHELF
+      - CRAFTING_TABLE
+    floor-blocks:
+      - OAK_PLANKS
+      - COBBLESTONE
+      - COARSE_DIRT
+    ceiling-blocks:
+      - OAK_PLANKS
+      - OAK_WOOD
+    light-blocks:
+      - LANTERN
+      - TORCH
+    treasure-chance: 0.55
+    traps:
+      - ARROW
+      - PIT
+      - CAVE_IN
+
+  TRIBAL_SHRINE:
+    primary-blocks:
+      - TERRACOTTA
+      - ACACIA_PLANKS
+      - ACACIA_LOG
+    accent-blocks:
+      - ORANGE_TERRACOTTA
+      - RED_TERRACOTTA
+      - YELLOW_TERRACOTTA
+    floor-blocks:
+      - TERRACOTTA
+      - RED_SAND
+      - COARSE_DIRT
+    ceiling-blocks:
+      - ACACIA_PLANKS
+      - TERRACOTTA
+    light-blocks:
+      - TORCH
+      - FIRE
+      - CAMPFIRE
+    treasure-chance: 0.7
+    traps:
+      - FLAME_JET
+      - ARROW
+      - PIT
+
+  SUNKEN_TEMPLE:
+    primary-blocks:
+      - MOSSY_STONE_BRICKS
+      - MOSSY_COBBLESTONE
+      - CRACKED_STONE_BRICKS
+    accent-blocks:
+      - LILY_PAD
+      - WEEPING_VINES
+      - CHISELED_STONE_BRICKS
+    floor-blocks:
+      - MOSSY_STONE_BRICKS
+      - MOSS_BLOCK
+      - MUD
+    ceiling-blocks:
+      - MOSSY_STONE_BRICKS
+      - STONE_BRICKS
+    light-blocks:
+      - SHROOMLIGHT
+      - SEA_PICKLE
+      - SOUL_LANTERN
+    treasure-chance: 0.75
+    traps:
+      - POISON_GAS
+      - PIT
+      - TELEPORTER
+
+  TEMPLE:
+    primary-blocks:
+      - MOSSY_COBBLESTONE
+      - MOSSY_STONE_BRICKS
+      - JUNGLE_PLANKS
+    accent-blocks:
+      - CHISELED_STONE_BRICKS
+      - GOLD_BLOCK
+      - LAPIS_BLOCK
+    floor-blocks:
+      - MOSSY_STONE_BRICKS
+      - MOSSY_COBBLESTONE
+      - JUNGLE_PLANKS
+    ceiling-blocks:
+      - MOSSY_STONE_BRICKS
+      - JUNGLE_PLANKS
+    light-blocks:
+      - LANTERN
+      - TORCH
+      - GLOWSTONE
+    treasure-chance: 0.8
+    traps:
+      - ARROW
+      - PIT
+      - FLAME_JET
+      - CAVE_IN
+
+  NETHER_BASTION:
+    primary-blocks:
+      - BLACKSTONE
+      - POLISHED_BLACKSTONE
+      - GILDED_BLACKSTONE
+    accent-blocks:
+      - NETHER_GOLD_ORE
+      - ANCIENT_DEBRIS
+      - CHISELED_POLISHED_BLACKSTONE
+    floor-blocks:
+      - BLACKSTONE
+      - SOUL_SOIL
+      - POLISHED_BASALT
+    ceiling-blocks:
+      - POLISHED_BLACKSTONE
+      - CRACKED_POLISHED_BLACKSTONE_BRICKS
+    light-blocks:
+      - SHROOMLIGHT
+      - LANTERN
+      - SOUL_FIRE
+    treasure-chance: 0.85
+    traps:
+      - FLAME_JET
+      - LAVA
+      - TELEPORTER
+
+  CRYSTALLINE_CAVERN:
+    primary-blocks:
+      - DEEPSLATE
+      - TUFF
+      - CALCITE
+    accent-blocks:
+      - AMETHYST_BLOCK
+      - BUDDING_AMETHYST
+      - PURPLE_STAINED_GLASS
+    floor-blocks:
+      - SMOOTH_BASALT
+      - CALCITE
+      - AMETHYST_BLOCK
+    ceiling-blocks:
+      - TUFF
+      - DEEPSLATE
+      - CALCITE
+    light-blocks:
+      - AMETHYST_CLUSTER
+      - SEA_LANTERN
+      - END_ROD
+    treasure-chance: 0.9
+    traps:
+      - TELEPORTER
+      - FREEZING
+      - ARROW
+
+  ANCIENT_LIBRARY:
+    primary-blocks:
+      - BOOKSHELF
+      - DARK_OAK_PLANKS
+      - DEEPSLATE_BRICKS
+    accent-blocks:
+      - LECTERN
+      - ENCHANTING_TABLE
+      - CHISELED_BOOKSHELF
+    floor-blocks:
+      - DARK_OAK_PLANKS
+      - SPRUCE_PLANKS
+      - POLISHED_DEEPSLATE
+    ceiling-blocks:
+      - DARK_OAK_PLANKS
+      - SPRUCE_PLANKS
+    light-blocks:
+      - CANDLE
+      - LANTERN
+      - END_ROD
+    treasure-chance: 0.75
+    traps:
+      - TELEPORTER
+      - POISON_GAS
+      - ARROW
+
+  CORAL_REEF_RUINS:
+    primary-blocks:
+      - BRAIN_CORAL_BLOCK
+      - TUBE_CORAL_BLOCK
+      - FIRE_CORAL_BLOCK
+    accent-blocks:
+      - HORN_CORAL_BLOCK
+      - BUBBLE_CORAL_BLOCK
+      - DEAD_BRAIN_CORAL_BLOCK
+    floor-blocks:
+      - SAND
+      - PRISMARINE
+      - DEAD_BRAIN_CORAL_BLOCK
+    ceiling-blocks:
+      - DEAD_TUBE_CORAL_BLOCK
+      - DEAD_HORN_CORAL_BLOCK
+      - PRISMARINE
+    light-blocks:
+      - SEA_LANTERN
+      - GLOWSTONE
+    treasure-chance: 0.8
+    traps:
+      - GUARDIAN_TRAP
+      - TELEPORTER
+      - POISON_GAS
+
+  SCULK_DUNGEON:
+    primary-blocks:
+      - DEEPSLATE_TILES
+      - DEEPSLATE_BRICKS
+      - REINFORCED_DEEPSLATE
+    accent-blocks:
+      - SCULK
+      - SCULK_SENSOR
+      - SCULK_CATALYST
+    floor-blocks:
+      - SCULK
+      - DEEPSLATE_TILES
+      - DEEPSLATE
+    ceiling-blocks:
+      - DEEPSLATE_TILES
+      - REINFORCED_DEEPSLATE
+    light-blocks:
+      - SCULK_CATALYST
+      - SOUL_LANTERN
+    treasure-chance: 0.95
+    traps:
+      - WARDEN_SUMMON
+      - TELEPORTER
+      - SCULK_SHRIEKER
+
+  MINESHAFT:
+    primary-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+      - MOSSY_COBBLESTONE
+    accent-blocks:
+      - OAK_PLANKS
+      - IRON_BARS
+      - OAK_FENCE
+    floor-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+    ceiling-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+    light-blocks:
+      - TORCH
+      - REDSTONE_TORCH
+    treasure-chance: 0.6
+    traps:
+      - ARROW
+      - PIT
+
+  DWARVEN_HALLS:
+    primary-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+      - ANDESITE
+    accent-blocks:
+      - IRON_BLOCK
+      - GOLD_BLOCK
+      - BRICKS
+    floor-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+    ceiling-blocks:
+      - COBBLESTONE
+      - STONE_BRICKS
+    light-blocks:
+      - TORCH
+      - LANTERN
+    treasure-chance: 0.65
+    traps:
+      - ARROW
+      - PIT
+      - CAVE_IN
+
+  ICE_CASTLE:
+    primary-blocks:
+      - ICE
+      - PACKED_ICE
+      - BLUE_ICE
+    accent-blocks:
+      - SNOW_BLOCK
+      - WHITE_TERRACOTTA
+    floor-blocks:
+      - PACKED_ICE
+      - SNOW_BLOCK
+    ceiling-blocks:
+      - PACKED_ICE
+      - SNOW_BLOCK
+    light-blocks:
+      - TORCH
+      - LANTERN
+    treasure-chance: 0.7
+    traps:
+      - ARROW
+      - FREEZING
+
+  UNDERWATER_RUINS:
+    primary-blocks:
+      - PRISMARINE
+      - PRISMARINE_BRICKS
+      - PRISMARINE
+    accent-blocks:
+      - SEA_LANTERN
+      - DEAD_BUBBLE_CORAL_BLOCK
+    floor-blocks:
+      - PRISMARINE
+      - PRISMARINE
+    ceiling-blocks:
+      - PRISMARINE_BRICKS
+      - PRISMARINE
+    light-blocks:
+      - SEA_LANTERN
+      - TORCH
+    treasure-chance: 0.75
+    traps:
+      - PIT
+      - POISON_GAS
+      - TELEPORTER

@@ -1,9 +1,12 @@
 package com.ubivismedia.aidungeon.config;
 
 import com.ubivismedia.aidungeon.AIDungeonGenerator;
+import com.ubivismedia.aidungeon.config.ConfigurationLoader;
+
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -14,11 +17,14 @@ import java.util.logging.Level;
 public class ConfigManager {
     
     private final AIDungeonGenerator plugin;
+    private final ConfigurationLoader configLoader;
+
     private final Map<String, DungeonTheme> themes = new HashMap<>();
     private final Map<Biome, String> biomeThemeMap = new HashMap<>();
     
     public ConfigManager(AIDungeonGenerator plugin) {
         this.plugin = plugin;
+        this.configLoader = new ConfigurationLoader(plugin);
     }
     
     /**
@@ -28,9 +34,15 @@ public class ConfigManager {
         // Clear existing data
         themes.clear();
         biomeThemeMap.clear();
+
+        // Load configurations
+        configLoader.loadConfigurations();
+        
+        // Get the merged configuration
+        FileConfiguration config = plugin.getConfig();
         
         // Load themes
-        ConfigurationSection themesSection = plugin.getConfig().getConfigurationSection("themes");
+        ConfigurationSection themesSection = config.getConfigurationSection("dungeon.themes");
         if (themesSection != null) {
             loadThemes(themesSection);
         } else {
@@ -39,7 +51,7 @@ public class ConfigManager {
         }
         
         // Load biome-theme mappings
-        ConfigurationSection biomesSection = plugin.getConfig().getConfigurationSection("biome-themes");
+        ConfigurationSection biomesSection = config.getConfigurationSection("dungeon.biome-themes");
         if (biomesSection != null) {
             loadBiomeThemeMappings(biomesSection);
         } else {
@@ -251,5 +263,12 @@ public class ConfigManager {
      */
     public Collection<DungeonTheme> getAllThemes() {
         return themes.values();
+    }
+
+    /**
+     * Access the configuration loader
+     */
+    public ConfigurationLoader getConfigLoader() {
+        return configLoader;
     }
 }
