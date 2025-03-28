@@ -1,5 +1,6 @@
 package com.ubivismedia.aidungeon.dungeons;
 
+import org.bukkit.Material;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
@@ -173,5 +174,41 @@ public class DungeonLayoutExtension {
                 }
             }
         }
+    }
+
+    private void placeBossRoom(World world, int centerX, int centerY, int centerZ, int width, int height, Set<Vector> placedPositions) {
+        // Use original boss room code with some enhancements
+        
+        // Create a larger, more open space
+        int bossRoomSize = width + 6; // Larger space for boss room
+        
+        // Place floor with special pattern
+        for (int x = -bossRoomSize/2; x <= bossRoomSize/2; x++) {
+            for (int z = -bossRoomSize/2; z <= bossRoomSize/2; z++) {
+                int worldX = centerX + x;
+                int worldY = centerY;
+                int worldZ = centerZ + z;
+                
+                // Create pattern on floor
+                if ((Math.abs(x) + Math.abs(z)) % 3 == 0) {
+                    world.setBlockData(worldX, worldY, worldZ, Material.POLISHED_BLACKSTONE_BRICKS.createBlockData());
+                } else {
+                    world.setBlockData(worldX, worldY, worldZ, Material.BLACKSTONE.createBlockData());
+                }
+                
+                // Mark as placed
+                placedPositions.add(new Vector(worldX, worldY, worldZ));
+            }
+        }
+        
+        // Create higher ceiling for boss room
+        int bossRoomHeight = height + 3;
+        
+        // Place walls and ceiling
+        // ...rest of boss room generation
+        
+        // Place boss spawner in center
+        world.setType(centerX, centerY + 1, centerZ, Material.SPAWNER);
+        placedPositions.add(new Vector(centerX, centerY + 1, centerZ));
     }
 }

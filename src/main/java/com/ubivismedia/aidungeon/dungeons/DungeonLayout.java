@@ -19,6 +19,7 @@ public class DungeonLayout {
     private final int size;
     private final RoomType[][] grid;
     private final Map<RoomType, List<Vector>> roomPositions;
+    private final Map<Vector, String> bossTypes = new HashMap<>();
     
     // Theme for this dungeon
     private final DungeonTheme theme;
@@ -401,5 +402,13 @@ public class DungeonLayout {
             world.setType(x + dx, y, z + dz, light);
             placedBlocks.add(new Vector(x + dx, y, z + dz));
         }
+    }
+
+    public void setBossType(int x, int y, String bossType) {
+        bossTypes.put(new Vector(x, y, 0), bossType);
+    }
+
+    public String getBossTypeAt(int x, int y) {
+        return bossTypes.get(new Vector(x, y, 0));
     }
 }

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.ubivismedia'
-version = '0.1.1-Alpha'
+version = '0.2.0'
 description = 'AI Dungeon Generator'
 
 repositories {

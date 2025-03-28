@@ -655,3 +655,400 @@ themes:
       - PIT
       - POISON_GAS
       - TELEPORTER
+
+bosses:
+  # Desert Pharaoh - Ancient ruler of the pyramid
+  desert_pharaoh:
+    name: "Desert Pharaoh"
+    entity_type: HUSK
+    max_health: 200.0
+    attack_damage: 10.0
+    movement_speed: 0.3
+    effects:
+      FIRE_RESISTANCE: 0
+      REGENERATION: 0
+    phases:
+      # Phase 1 - Normal attacks (75-100% health)
+      phase1:
+        transition_threshold: 75
+        transition_message: "The Desert Pharaoh calls upon the powers of the ancient sands!"
+        abilities:
+          minion_spawn:
+            type: MINION_SUMMON
+            entity_type: HUSK
+            count: 3
+            radius: 5.0
+            cooldown: 30
+          sand_vortex:
+            type: AREA_EFFECT
+            effect: SLOW
+            duration: 100
+            amplifier: 1
+            radius: 4.0
+            cooldown: 20
+      
+      # Phase 2 - More aggressive (50-75% health)
+      phase2:
+        transition_threshold: 50
+        transition_message: "The Desert Pharaoh's wrappings begin to unravel as ancient magic surges!"
+        abilities:
+          sand_storm:
+            type: AREA_EFFECT
+            effect: BLINDNESS
+            duration: 60
+            amplifier: 0
+            radius: 8.0
+            cooldown: 25
+          teleport:
+            type: TELEPORT
+            radius: 8.0
+            cooldown: 15
+          arrow_barrage:
+            type: PROJECTILE_BARRAGE
+            projectile: ARROW
+            count: 5
+            speed: 1.2
+            spread: 45.0
+            cooldown: 18
+      
+      # Phase 3 - Final phase (0-50% health)
+      phase3:
+        transition_threshold: 25
+        transition_message: "The Desert Pharaoh unleashes his ultimate power!"
+        abilities:
+          lightning_fury:
+            type: LIGHTNING_STRIKE
+            count: 5
+            radius: 10.0
+            cooldown: 35
+          super_minions:
+            type: MINION_SUMMON
+            entity_type: HUSK
+            count: 5
+            radius: 8.0
+            cooldown: 40
+          quicksand:
+            type: AREA_EFFECT
+            effect: SLOW
+            duration: 100
+            amplifier: 2
+            radius: 10.0
+            cooldown: 30
+    
+    # Loot drops when defeated
+    drops:
+      # Always drop these items
+      guaranteed:
+        GOLD_BLOCK: 3
+        DIAMOND: 2
+        ENCHANTED_GOLDEN_APPLE: 1
+      
+      # Chance-based drops
+      chance:
+        NETHERITE_INGOT:
+          chance: 0.3
+          amount: 1
+        TRIDENT:
+          chance: 0.5
+          amount: 1
+    
+    # XP bonus
+    xp_bonus: 1000
+    
+    # Whether to clear default mob drops
+    clear_default_drops: true
+
+  # Frost Monarch - Ruler of the frozen wastes
+  frost_monarch:
+    name: "Frost Monarch"
+    entity_type: STRAY
+    max_health: 180.0
+    attack_damage: 8.0
+    movement_speed: 0.35
+    effects:
+      FIRE_RESISTANCE: 0
+      WATER_BREATHING: 0
+    phases:
+      # Phase 1 - Normal attacks
+      phase1:
+        transition_threshold: 75
+        transition_message: "The Frost Monarch's eyes glow with icy fury!"
+        abilities:
+          ice_shot:
+            type: PROJECTILE_BARRAGE
+            projectile: SNOWBALL
+            count: 7
+            speed: 1.5
+            spread: 60.0
+            cooldown: 15
+          frost_minions:
+            type: MINION_SUMMON
+            entity_type: STRAY
+            count: 2
+            radius: 5.0
+            cooldown: 30
+      
+      # Phase 2 - Ice barriers
+      phase2:
+        transition_threshold: 50
+        transition_message: "The Frost Monarch summons walls of ice!"
+        abilities:
+          freezing_aura:
+            type: AREA_EFFECT
+            effect: SLOW
+            duration: 100
+            amplifier: 2
+            radius: 6.0
+            cooldown: 20
+          blizzard:
+            type: AREA_EFFECT
+            effect: BLINDNESS
+            duration: 60
+            amplifier: 0
+            radius: 10.0
+            cooldown: 35
+          teleport:
+            type: TELEPORT
+            radius: 10.0
+            cooldown: 18
+      
+      # Phase 3 - Final phase
+      phase3:
+        transition_threshold: 25
+        transition_message: "The air around you freezes to absolute zero!"
+        abilities:
+          avalanche:
+            type: LIGHTNING_STRIKE
+            count: 8
+            radius: 12.0
+            cooldown: 40
+          deep_freeze:
+            type: AREA_EFFECT
+            effect: SLOW
+            duration: 200
+            amplifier: 3
+            radius: 15.0
+            cooldown: 50
+          ice_barrage:
+            type: PROJECTILE_BARRAGE
+            projectile: ARROW
+            count: 12
+            speed: 2.0
+            spread: 120.0
+            cooldown: 25
+    
+    # Loot drops
+    drops:
+      guaranteed:
+        DIAMOND: 3
+        BLUE_ICE: 10
+        ENCHANTED_GOLDEN_APPLE: 1
+      chance:
+        TRIDENT:
+          chance: 0.7
+          amount: 1
+        NETHERITE_INGOT:
+          chance: 0.2
+          amount: 1
+    
+    # XP bonus
+    xp_bonus: 800
+    
+    # Clear default drops
+    clear_default_drops: true
+
+  # Ancient Guardian - Protector of the ruins
+  ancient_guardian:
+    name: "Ancient Guardian"
+    entity_type: IRON_GOLEM
+    max_health: 250.0
+    attack_damage: 15.0
+    movement_speed: 0.2
+    effects:
+      FIRE_RESISTANCE: 0
+      REGENERATION: 0
+    phases:
+      # Phase 1
+      phase1:
+        transition_threshold: 80
+        transition_message: "The Ancient Guardian awakens fully!"
+        abilities:
+          ground_pound:
+            type: AREA_EFFECT
+            effect: HARM
+            duration: 5
+            amplifier: 0
+            radius: 5.0
+            cooldown: 15
+          stone_throw:
+            type: PROJECTILE_BARRAGE
+            projectile: ARROW
+            count: 3
+            speed: 1.0
+            spread: 30.0
+            cooldown: 10
+      
+      # Phase 2
+      phase2:
+        transition_threshold: 50
+        transition_message: "The Ancient Guardian's eyes glow with ancient magic!"
+        abilities:
+          statue_summon:
+            type: MINION_SUMMON
+            entity_type: ZOMBIE
+            count: 4
+            radius: 8.0
+            cooldown: 30
+          teleport:
+            type: TELEPORT
+            radius: 8.0
+            cooldown: 20
+          smash_wave:
+            type: AREA_EFFECT
+            effect: HARM
+            duration: 5
+            amplifier: 1
+            radius: 8.0
+            cooldown: 25
+      
+      # Phase 3
+      phase3:
+        transition_threshold: 20
+        transition_message: "The Ancient Guardian channels the power of forgotten gods!"
+        abilities:
+          lightning_wrath:
+            type: LIGHTNING_STRIKE
+            count: 6
+            radius: 10.0
+            cooldown: 30
+          earthquake:
+            type: AREA_EFFECT
+            effect: HARM
+            duration: 5
+            amplifier: 2
+            radius: 12.0
+            cooldown: 40
+          guardian_rage:
+            type: MINION_SUMMON
+            entity_type: IRON_GOLEM
+            count: 1
+            radius: 3.0
+            cooldown: 60
+    
+    # Loot drops
+    drops:
+      guaranteed:
+        DIAMOND: 5
+        EMERALD: 10
+        ANCIENT_DEBRIS: 3
+      chance:
+        NETHERITE_INGOT:
+          chance: 0.5
+          amount: 2
+        TOTEM_OF_UNDYING:
+          chance: 0.3
+          amount: 1
+    
+    # XP bonus
+    xp_bonus: 1200
+    
+    # Clear default drops
+    clear_default_drops: true
+
+  # Swamp Witch - Mistress of the dark marshes
+  swamp_witch:
+    name: "Swamp Witch"
+    entity_type: WITCH
+    max_health: 150.0
+    attack_damage: 6.0
+    movement_speed: 0.4
+    effects:
+      WATER_BREATHING: 0
+      NIGHT_VISION: 0
+    phases:
+      # Phase 1
+      phase1:
+        transition_threshold: 75
+        transition_message: "The Swamp Witch cackles as she prepares a deadly brew!"
+        abilities:
+          poison_cloud:
+            type: AREA_EFFECT
+            effect: POISON
+            duration: 100
+            amplifier: 1
+            radius: 5.0
+            cooldown: 20
+          summon_spiders:
+            type: MINION_SUMMON
+            entity_type: CAVE_SPIDER
+            count: 3
+            radius: 5.0
+            cooldown: 30
+      
+      # Phase 2
+      phase2:
+        transition_threshold: 40
+        transition_message: "Dark energy swirls around the Swamp Witch!"
+        abilities:
+          teleport:
+            type: TELEPORT
+            radius: 10.0
+            cooldown: 15
+          weakness_curse:
+            type: AREA_EFFECT
+            effect: WEAKNESS
+            duration: 200
+            amplifier: 1
+            radius: 8.0
+            cooldown: 25
+          potion_barrage:
+            type: PROJECTILE_BARRAGE
+            projectile: ARROW
+            count: 5
+            speed: 1.2
+            spread: 60.0
+            cooldown: 18
+      
+      # Phase 3
+      phase3:
+        transition_threshold: 15
+        transition_message: "The Swamp Witch transforms into her true form!"
+        abilities:
+          wither_curse:
+            type: AREA_EFFECT
+            effect: WITHER
+            duration: 100
+            amplifier: 1
+            radius: 10.0
+            cooldown: 30
+          summon_slimes:
+            type: MINION_SUMMON
+            entity_type: SLIME
+            count: 5
+            radius: 8.0
+            cooldown: 35
+          lightning_hex:
+            type: LIGHTNING_STRIKE
+            count: 4
+            radius: 12.0
+            cooldown: 40
+    
+    # Loot drops
+    drops:
+      guaranteed:
+        EMERALD: 8
+        GHAST_TEAR: 5
+        GOLDEN_APPLE: 2
+      chance:
+        TOTEM_OF_UNDYING:
+          chance: 0.4
+          amount: 1
+        NETHERITE_INGOT:
+          chance: 0.15
+          amount: 1
+    
+    # XP bonus
+    xp_bonus: 750
+    
+    # Clear default drops
+    clear_default_drops: true

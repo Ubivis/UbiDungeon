@@ -4,6 +4,7 @@ import com.ubivismedia.aidungeon.AIDungeonGenerator;
 import com.ubivismedia.aidungeon.config.DungeonTheme;
 import com.ubivismedia.aidungeon.dungeons.BiomeArea;
 import com.ubivismedia.aidungeon.dungeons.DungeonManager;
+import com.ubivismedia.aidungeon.dungeons.RoomType;
 import com.ubivismedia.aidungeon.storage.DungeonData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -133,14 +134,37 @@ public class MobHandler implements Listener {
         // Check if this spawner is in a dungeon
         BiomeArea dungeonArea = getDungeonAreaAtLocation(spawnerLoc);
         if (dungeonArea != null) {
-            // Mark the spawned entity as a dungeon mob
-            Entity entity = event.getEntity();
-            if (entity instanceof LivingEntity) {
-                markAsDungeonMob((LivingEntity) entity);
+            // Get dungeon data
+            DungeonData dungeonData = plugin.getDungeonManager().getDungeon(dungeonArea);
+            if (dungeonData != null) {
+                // Mark the spawned entity as a dungeon mob
+                Entity entity = event.getEntity();
                 
-                // Check for elite mob (10% chance)
-                if (random.nextDouble() < 0.1) {
-                    markAsEliteMob((LivingEntity) entity);
+                // Check if this is in a boss room - special handling for boss rooms
+                RoomType roomType = dungeonData.getRoomTypeAt(spawnerLoc);
+                if (roomType == RoomType.BOSS) {
+                    // Cancel the default spawn
+                    event.setCancelled(true);
+                    
+                    // Get boss type from layout
+                    String bossType = dungeonData.getBossTypeAt(spawnerLoc);
+                    if (bossType == null) {
+                        // Fallback based on biome/theme
+                        bossType = determineBossTypeFromTheme(dungeonData.getTheme());
+                    }
+                    
+                    // Spawn the boss
+                    plugin.getBossManager().spawnBoss(bossType, spawnerLoc, dungeonArea);
+                    return;
+                }
+
+                if (entity instanceof LivingEntity) {
+                    markAsDungeonMob((LivingEntity) entity);
+                    
+                    // Check for elite mob (10% chance)
+                    if (random.nextDouble() < 0.1) {
+                        markAsEliteMob((LivingEntity) entity);
+                    }
                 }
             }
         }
@@ -605,6 +629,23 @@ public class MobHandler implements Listener {
                     equipMob(entity, elite);
                 }
             }
+        }
+    }
+
+    private String determineBossTypeFromTheme(DungeonTheme theme) {
+        String themeName = theme.getName();
+        
+        switch(themeName.toUpperCase()) {
+            case "PYRAMID":
+                return "desert_pharaoh";
+            case "ICE_CASTLE":
+                return "frost_monarch";
+            case "RUINS":
+                return "ancient_guardian";
+            case "WITCH_HUT":
+                return "swamp_witch";
+            default:
+                return "ancient_guardian"; // Default
         }
     }
 }

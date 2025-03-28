@@ -11,10 +11,15 @@ import com.ubivismedia.aidungeon.handlers.TrapHandler;
 import com.ubivismedia.aidungeon.listeners.PlayerMoveListener;
 import com.ubivismedia.aidungeon.quests.QuestSystem;
 import com.ubivismedia.aidungeon.storage.DungeonStorage;
+import com.ubivismedia.aidungeon.boss.BossManager;
+
 import com.ubivismedia.aidungeon.api.AIDungeonAPI;
 import com.ubivismedia.aidungeon.localization.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Location;
+import org.bukkit.util.Vector;
 
 import java.util.logging.Level;
 
@@ -28,6 +33,7 @@ public class AIDungeonGenerator extends JavaPlugin {
     private BiomeExplorationTracker biomeExplorationTracker;
     private AIDungeonAPI api;
     private LanguageManager languageManager;
+    private BossManager bossManager;
 
     @Override
     public void onEnable() {
@@ -54,6 +60,9 @@ public class AIDungeonGenerator extends JavaPlugin {
 
         // Initialize biome exploration tracker
         biomeExplorationTracker = new BiomeExplorationTracker();
+
+        // Initialize boss manager
+        this.bossManager = new BossManager(this);
 
         this.api = new AIDungeonAPI(this);
 
@@ -120,6 +129,10 @@ public class AIDungeonGenerator extends JavaPlugin {
     public DungeonStorage getDungeonStorage() {
         return dungeonStorage;
     }
+
+    public BossManager getBossManager() {
+        return bossManager;
+    }
     
     public QuestSystem getQuestSystem() {
         return questSystem;
@@ -135,6 +148,10 @@ public class AIDungeonGenerator extends JavaPlugin {
 
     public LanguageManager getLanguageManager() {
         return languageManager;
+    }
+
+    public NamespacedKey getNamespacedKey(String key) {
+        return new NamespacedKey(this, key);
     }
     
     /**

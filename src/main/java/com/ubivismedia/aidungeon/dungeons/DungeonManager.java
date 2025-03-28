@@ -171,7 +171,8 @@ public class DungeonManager {
                         DungeonData dungeonData = new DungeonData(
                                 layout, 
                                 task.getDiscovererUUID(), 
-                                System.currentTimeMillis()
+                                System.currentTimeMillis(),
+                                plugin
                         );
                         
                         // Store in memory and persistent storage
@@ -210,7 +211,8 @@ public class DungeonManager {
             DungeonData dungeonData = new DungeonData(
                     layout,
                     task.getDiscovererUUID(),
-                    System.currentTimeMillis()
+                    System.currentTimeMillis(),
+                    plugin
             );
             
             // Store in memory and persistent storage

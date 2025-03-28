@@ -114,12 +114,6 @@ public class DungeonGenerator {
         int treasureRooms = Math.max(1, size / 15);
         int trapRooms = Math.max(2, size / 10);
         
-        // Place boss room (furthest from entrance)
-        RoomPosition furthest = findFurthestRoom(layout);
-        if (furthest != null) {
-            layout.setRoomType(furthest.x, furthest.y, RoomType.BOSS);
-        }
-        
         // Place treasure rooms
         int treasuresPlaced = 0;
         for (int i = 0; i < 100 && treasuresPlaced < treasureRooms; i++) {
@@ -149,6 +143,17 @@ public class DungeonGenerator {
                     trapsPlaced++;
                 }
             }
+        }
+
+        // Place boss room (furthest from entrance)
+        RoomPosition furthest = findFurthestRoom(layout);
+        if (furthest != null) {
+            layout.setRoomType(furthest.x, furthest.y, RoomType.BOSS);
+            
+            // Store the boss type based on theme
+            String themeId = layout.getTheme().getName();
+            String bossType = plugin.getConfig().getString("themes." + themeId + ".boss_type", "ancient_guardian");
+            layout.setBossType(furthest.x, furthest.y, bossType);
         }
     }
     
