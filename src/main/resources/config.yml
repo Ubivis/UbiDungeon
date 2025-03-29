@@ -1,11 +1,26 @@
-# AIDungeonGenerator Configuration
+# AIDungeonGenerator Main Configuration
+
+# Version of the configuration
+config-version: 1
+
+# Import other configuration files
+imports:
+  dungeon: conf/dungeon.yml
+  bosses: conf/bosses.yml
+  environment: conf/env.yml
+  quests: conf/quest.yml
 
 # General Settings
 settings:
   debug-mode: false
   language: en
   dungeon-per-biome: true
-  min-distance-between-dungeons: 1000
-  world-blacklist:
-    - world_nether
-    - world_the_end
+  min-distance-between-dungeons: 500
+  plugin-updates:
+    check-on-startup: true
+    auto-download: false
+
+# Optional global settings that might override specific configs
+global:
+  difficulty: normal
+  logging-level: INFO

@@ -74,31 +74,42 @@ public class DungeonManager {
         if (generatedDungeons.containsKey(area)) {
             return false;
         }
-        
+
         // Check world blacklist
         if (plugin.getConfig().getStringList("settings.world-blacklist").contains(area.getWorldName())) {
             return false;
         }
-        
+
         // Check player cooldown
         if (playerGenerationCooldown.getIfPresent(player.getUniqueId()) != null) {
             return false;
         }
-        
-        // Check minimum distance
+
+        // Get configuration settings
+        boolean dungeonPerBiome = plugin.getConfig().getBoolean("settings.dungeon-per-biome", true);
         int minDistance = plugin.getConfig().getInt("settings.min-distance-between-dungeons", 1000);
+
+        // Check minimum distance
         for (BiomeArea existingArea : generatedDungeons.keySet()) {
             if (existingArea.getWorldName().equals(area.getWorldName())) {
+                // If dungeonPerBiome is true, we allow one dungeon per biome regardless of distance
+                if (dungeonPerBiome && existingArea.getPrimaryBiome() == area.getPrimaryBiome()) {
+                    // Same biome - don't allow another dungeon
+                    return false;
+                }
+
+                // Check distance between dungeons
                 double distance = Math.sqrt(
                         Math.pow(existingArea.getCenterX() - area.getCenterX(), 2) +
-                        Math.pow(existingArea.getCenterZ() - area.getCenterZ(), 2)
+                                Math.pow(existingArea.getCenterZ() - area.getCenterZ(), 2)
                 );
+
                 if (distance < minDistance) {
                     return false;
                 }
             }
         }
-        
+
         return true;
     }
     
@@ -107,23 +118,30 @@ public class DungeonManager {
      */
     public void queueDungeonGeneration(BiomeArea area, Player discoverer) {
         if (!canGenerateDungeon(discoverer, area)) {
+            plugin.getLogger().warning("Attempted to queue dungeon generation for " + area + " but conditions not met");
             return;
         }
-        
+
         // Set cooldown for this player
         playerGenerationCooldown.put(discoverer.getUniqueId(), System.currentTimeMillis());
-        
+
         // Add to generation queue
         GenerationTask task = new GenerationTask(area, discoverer.getUniqueId());
         generationQueue.add(task);
-        
+
+        // Mark this biome as having a dungeon being generated
+        plugin.getBiomeExplorationTracker().markDungeonGenerated(
+                discoverer.getWorld(),
+                area.getPrimaryBiome()
+        );
+
         // If async is disabled, process immediately on the main thread
         if (!asyncGenerationEnabled) {
             Bukkit.getScheduler().runTask(plugin, () -> processGenerationTask(task));
         }
-        
-        plugin.getLogger().info("Queued dungeon generation in " + area.getPrimaryBiome() + 
-                " at " + area.getCenterX() + "," + area.getCenterZ() + 
+
+        plugin.getLogger().info("Queued dungeon generation in " + area.getPrimaryBiome() +
+                " at " + area.getCenterX() + "," + area.getCenterZ() +
                 " discovered by " + discoverer.getName());
     }
     

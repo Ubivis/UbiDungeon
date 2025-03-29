@@ -39,11 +39,10 @@ quest:
     hint: "§7This compass points to your quest objective"
     received: "§aYou received a Quest Tracker compass for: §f{0}"
 
-  quest:
-    type:
-      KILL: "Combat"
-      COLLECT: "Collection"
-      EXPLORE: "Exploration"
+  type:
+    KILL: "Combat"
+    COLLECT: "Collection"
+    EXPLORE: "Exploration"
 
   status:
     no_quests: "§eYou don't have any active quests."
@@ -97,36 +96,36 @@ dungeon:
     player_only: "§cThis command can only be used by players."
     no_permission: "§cYou don't have permission to use this command."
 
-    help:
-      header: "§6=== AI Dungeon Generator Commands ==="
-      generate: "§e/aidungeon generate §f- Generate a dungeon at your location"
-      info: "§e/aidungeon info §f- Show information about nearby dungeons"
-      list: "§e/aidungeon list §f- List all generated dungeons"
-      tp: "§e/aidungeon tp <id> §f- Teleport to a dungeon by ID"
-      reload: "§e/aidungeon reload §f- Reload the plugin configuration"
+  help:
+    header: "§6=== AI Dungeon Generator Commands ==="
+    generate: "§e/aidungeon generate §f- Generate a dungeon at your location"
+    info: "§e/aidungeon info §f- Show information about nearby dungeons"
+    list: "§e/aidungeon list §f- List all generated dungeons"
+    tp: "§e/aidungeon tp <id> §f- Teleport to a dungeon by ID"
+    reload: "§e/aidungeon reload §f- Reload the plugin configuration"
 
-    generate:
-      exists: "§cA dungeon already exists in this area or you are in a blacklisted world."
-      queued: "§aGenerating dungeon in {0} biome..."
+  generate:
+    exists: "§cA dungeon already exists in this area or you are in a blacklisted world."
+    queued: "§aGenerating dungeon in {0} biome..."
 
-    info:
-      no_dungeons: "§eNo dungeons have been generated yet."
-      nearby_header: "§6=== Nearby Dungeon ==="
-      theme: "§eTheme: §f{0}"
-      biome: "§eBiome: §f{0}"
-      location: "§eLocation: §fX:{0}, Z:{1}"
-      distance: "§eDistance: §f{0} blocks"
-      id: "§eID: §f{0}:{1}:{2}"
-      no_nearby: "§eNo dungeons within 500 blocks of your location."
+  info:
+    no_dungeons: "§eNo dungeons have been generated yet."
+    nearby_header: "§6=== Nearby Dungeon ==="
+    theme: "§eTheme: §f{0}"
+    biome: "§eBiome: §f{0}"
+    location: "§eLocation: §fX:{0}, Z:{1}"
+    distance: "§eDistance: §f{0} blocks"
+    id: "§eID: §f{0}:{1}:{2}"
+    no_nearby: "§eNo dungeons within 500 blocks of your location."
 
-    list:
-      no_dungeons: "§eNo dungeons have been generated yet."
-      header: "§6=== Generated Dungeons ==="
-      entry: "§e{0}. §f{1} [{2}, {3}] - §b{4}"
-      more: "§eUse /aidungeon list <page> to see more dungeons."
+  list:
+    no_dungeons: "§eNo dungeons have been generated yet."
+    header: "§6=== Generated Dungeons ==="
+    entry: "§e{0}. §f{1} [{2}, {3}] - §b{4}"
+    more: "§eUse /aidungeon list <page> to see more dungeons."
 
-    reload:
-      success: "§aAI Dungeon Generator configuration reloaded."
+  reload:
+    success: "§aAI Dungeon Generator configuration reloaded."
 
 # Trap Messages
 trap:

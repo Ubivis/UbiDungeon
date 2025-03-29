@@ -39,11 +39,10 @@ quest:
     hint: "§7Dieser Kompass zeigt auf dein Quest-Ziel"
     received: "§aDu hast einen Quest-Tracker-Kompass für erhalten: §f{0}"
 
-  quest:
-    type:
-      KILL: "Kampf"
-      COLLECT: "Sammlung"
-      EXPLORE: "Erkundung"
+  type:
+    KILL: "Kampf"
+    COLLECT: "Sammlung"
+    EXPLORE: "Erkundung"
 
   status:
     no_quests: "§eDu hast keine aktiven Quests."
@@ -97,36 +96,36 @@ dungeon:
     player_only: "§cDieser Befehl kann nur von Spielern verwendet werden."
     no_permission: "§cDu hast keine Berechtigung, diesen Befehl zu verwenden."
 
-    help:
-      header: "§6=== AI-Dungeon-Generator-Befehle ==="
-      generate: "§e/aidungeon generate §f- Generiere einen Dungeon an deinem Standort"
-      info: "§e/aidungeon info §f- Zeige Informationen über nahegelegene Dungeons"
-      list: "§e/aidungeon list §f- Liste alle generierten Dungeons auf"
-      tp: "§e/aidungeon tp <id> §f- Teleportiere dich zu einem Dungeon nach ID"
-      reload: "§e/aidungeon reload §f- Lade die Plugin-Konfiguration neu"
+  help:
+    header: "§6=== AI-Dungeon-Generator-Befehle ==="
+    generate: "§e/aidungeon generate §f- Generiere einen Dungeon an deinem Standort"
+    info: "§e/aidungeon info §f- Zeige Informationen über nahegelegene Dungeons"
+    list: "§e/aidungeon list §f- Liste alle generierten Dungeons auf"
+    tp: "§e/aidungeon tp <id> §f- Teleportiere dich zu einem Dungeon nach ID"
+    reload: "§e/aidungeon reload §f- Lade die Plugin-Konfiguration neu"
 
-    generate:
-      exists: "§cEin Dungeon existiert bereits in diesem Bereich oder du befindest dich in einer schwarzen Liste Welt."
-      queued: "§aDungeon-Generierung in {0}-Biom angestoßen..."
+  generate:
+    exists: "§cEin Dungeon existiert bereits in diesem Bereich oder du befindest dich in einer schwarzen Liste Welt."
+    queued: "§aDungeon-Generierung in {0}-Biom angestoßen..."
 
-    info:
-      no_dungeons: "§eEs wurden noch keine Dungeons generiert."
-      nearby_header: "§6=== Nahegelegener Dungeon ==="
-      theme: "§eThema: §f{0}"
-      biome: "§eBiom: §f{0}"
-      location: "§eOrt: §fX:{0}, Z:{1}"
-      distance: "§eEntfernung: §f{0} Blöcke"
-      id: "§eID: §f{0}:{1}:{2}"
-      no_nearby: "§eKeine Dungeons innerhalb von 500 Blöcken von deinem Standort."
+  info:
+    no_dungeons: "§eEs wurden noch keine Dungeons generiert."
+    nearby_header: "§6=== Nahegelegener Dungeon ==="
+    theme: "§eThema: §f{0}"
+    biome: "§eBiom: §f{0}"
+    location: "§eOrt: §fX:{0}, Z:{1}"
+    distance: "§eEntfernung: §f{0} Blöcke"
+    id: "§eID: §f{0}:{1}:{2}"
+    no_nearby: "§eKeine Dungeons innerhalb von 500 Blöcken von deinem Standort."
 
-    list:
-      no_dungeons: "§eEs wurden noch keine Dungeons generiert."
-      header: "§6=== Generierte Dungeons ==="
-      entry: "§e{0}. §f{1} [{2}, {3}] - §b{4}"
-      more: "§eBenutze /aidungeon list <Seite>, um weitere Dungeons zu sehen."
+  list:
+    no_dungeons: "§eEs wurden noch keine Dungeons generiert."
+    header: "§6=== Generierte Dungeons ==="
+    entry: "§e{0}. §f{1} [{2}, {3}] - §b{4}"
+    more: "§eBenutze /aidungeon list <Seite>, um weitere Dungeons zu sehen."
 
-    reload:
-      success: "§aAI-Dungeon-Generator-Konfiguration neu geladen."
+  reload:
+    success: "§aAI-Dungeon-Generator-Konfiguration neu geladen."
 
 # Fallen-Nachrichten
 trap:

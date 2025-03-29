@@ -60,8 +60,19 @@ public class PlayerMoveListener implements Listener {
                     newArea.getPrimaryBiome()
             );
 
-            // Check if we've explored enough of this biome (10% threshold)
+            // Get configuration values
             double threshold = plugin.getConfig().getDouble("discovery.exploration-threshold", 0.1);
+            boolean debug = plugin.getConfig().getBoolean("settings.debug-mode", false);
+
+            // Log debug information if enabled
+            if (debug) {
+                player.sendMessage("§7[Debug] Biome: " + newArea.getPrimaryBiome() +
+                        ", Exploration: " + String.format("%.1f", explorationPercentage * 100) + "%" +
+                        ", Generated: " + plugin.getBiomeExplorationTracker().hasDungeonBeenGenerated(
+                        player.getWorld(), newArea.getPrimaryBiome()));
+            }
+
+            // Check if we've explored enough of this biome and no dungeon has been generated yet
             boolean shouldGenerateDungeon = explorationPercentage >= threshold &&
                     !plugin.getBiomeExplorationTracker().hasDungeonBeenGenerated(
                             player.getWorld(),
@@ -80,7 +91,7 @@ public class PlayerMoveListener implements Listener {
                 );
 
                 // Debug message to player if enabled
-                if (plugin.getConfig().getBoolean("settings.debug-mode", false)) {
+                if (debug) {
                     player.sendMessage(lang.getMessage("dungeon.debug_generation",
                             newArea.getPrimaryBiome(),
                             newArea.getCenterX(),
@@ -94,6 +105,15 @@ public class PlayerMoveListener implements Listener {
                 if (existingDungeon != null) {
                     // Generate quest when entering a dungeon
                     questSystem.generateQuestForPlayer(player, existingDungeon);
+                }
+
+                // Debug why dungeon wasn't generated if in debug mode
+                if (debug && explorationPercentage >= threshold) {
+                    if (plugin.getBiomeExplorationTracker().hasDungeonBeenGenerated(player.getWorld(), newArea.getPrimaryBiome())) {
+                        player.sendMessage("§7[Debug] Dungeon already exists for biome " + newArea.getPrimaryBiome());
+                    } else if (!dungeonManager.canGenerateDungeon(player, newArea)) {
+                        player.sendMessage("§7[Debug] Cannot generate dungeon: too close to existing dungeon or other restriction");
+                    }
                 }
             }
         }
