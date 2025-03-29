@@ -1,17 +1,21 @@
 package com.ubivismedia.aidungeon.commands;
 
 import com.ubivismedia.aidungeon.AIDungeonGenerator;
+import com.ubivismedia.aidungeon.config.DungeonTheme;
 import com.ubivismedia.aidungeon.dungeons.BiomeArea;
 import com.ubivismedia.aidungeon.dungeons.DungeonManager;
 import com.ubivismedia.aidungeon.localization.LanguageManager;
 import com.ubivismedia.aidungeon.storage.DungeonData;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.block.Biome;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,12 +56,126 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
             case "teleport":
             case "tp":
                 return handleTeleport(sender, args);
+            case "debug":
+                return handleDebug(sender);
+            case "check":
+                return handleCheck(sender);
             default:
                 sendHelp(sender);
                 return true;
         }
     }
-    
+
+    /**
+     * Handle the check command
+     */
+    private boolean handleCheck(CommandSender sender) {
+        LanguageManager lang = plugin.getLanguageManager();
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(lang.getMessage("dungeon.errors.player_only"));
+            return true;
+        }
+
+        Player player = (Player) sender;
+
+        if (!player.hasPermission("aidungeon.admin")) {
+            player.sendMessage(lang.getMessage("dungeon.errors.no_permission"));
+            return true;
+        }
+
+        // Manually trigger an exploration check for this player
+        plugin.getExplorationChecker().checkPlayerExploration(player);
+        player.sendMessage(lang.getMessage("dungeon.check.triggered"));
+
+        return true;
+    }
+
+    /**
+     * Handle debug command to show detailed location information
+     */
+    private boolean handleDebug(CommandSender sender) {
+        LanguageManager lang = plugin.getLanguageManager();
+
+        // Ensure command is used by a player
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(lang.getMessage("dungeon.errors.player_only"));
+            return true;
+        }
+
+        Player player = (Player) sender;
+        Location location = player.getLocation();
+
+        // Detailed configuration debugging
+        sender.sendMessage("§6==== Configuration Debugging ====");
+
+        // Check exploration threshold from various sources
+        sender.sendMessage("§eExploration Threshold Lookup:");
+
+        // Method 1: Direct config method
+        sender.sendMessage("§f - Plugin Config Method:");
+        try {
+            double configThreshold = plugin.getConfig().getDouble("discovery.exploration-threshold", -1);
+            sender.sendMessage("§f   - Threshold: " + configThreshold);
+        } catch (Exception e) {
+            sender.sendMessage("§c   - Error: " + e.getMessage());
+        }
+
+        // Method 2: Direct dungeon config
+        sender.sendMessage("§f - Dungeon Config Direct:");
+        try {
+            ConfigurationSection dungeonConfig = plugin.getConfigManager().getConfigLoader().getConfig("dungeon");
+            double dungeonConfigThreshold = dungeonConfig.getDouble("discovery.exploration-threshold", -1);
+            sender.sendMessage("§f   - Threshold: " + dungeonConfigThreshold);
+        } catch (Exception e) {
+            sender.sendMessage("§c   - Error: " + e.getMessage());
+        }
+
+        // Method 3: Configuration Manager method
+        sender.sendMessage("§f - Configuration Manager Method:");
+        try {
+            double managerThreshold = plugin.getConfigManager().getDouble("discovery.exploration-threshold", 0.1);
+            sender.sendMessage("§f   - Threshold: " + managerThreshold);
+        } catch (Exception e) {
+            sender.sendMessage("§c   - Error: " + e.getMessage());
+        }
+
+        // Get world and biome
+        World world = location.getWorld();
+        Biome biome = world.getBiome(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+
+        // Check if this is in a dungeon
+        BiomeArea dungeonArea = plugin.getDungeonManager().getDungeonAreaAtLocation(location);
+
+        // Explore the biome
+        double explorationPercentage = plugin.getBiomeExplorationTracker().recordExploredChunk(
+                player,
+                world,
+                biome
+        );
+
+        // Check dungeon generation conditions
+        boolean hasDungeonBeenGenerated = plugin.getBiomeExplorationTracker()
+                .hasDungeonBeenGenerated(world, biome);
+
+        // Use the configuration manager method to get threshold
+        double explorationThreshold = plugin.getConfigManager().getDouble("discovery.exploration-threshold", 0.1);
+
+        // Debugging messages
+        sender.sendMessage("§6==== Dungeon Debug Information ====");
+        sender.sendMessage("§eWorld: §f" + world.getName());
+        sender.sendMessage("§eBiome: §f" + biome.name());
+        sender.sendMessage("§eLocation: §fX:" + location.getBlockX() +
+                " Y:" + location.getBlockY() +
+                " Z:" + location.getBlockZ());
+        sender.sendMessage("§eExploration Percentage: §f" +
+                String.format("%.4f", explorationPercentage * 100) + "%");
+        sender.sendMessage("§eExploration Threshold: §f" +
+                String.format("%.4f", explorationThreshold * 100) + "%");
+        sender.sendMessage("§eDungeon Generated: §f" + hasDungeonBeenGenerated);
+
+        return true;
+    }
+
     /**
      * Send help information to a player
      */
@@ -69,6 +187,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(lang.getMessage("dungeon.help.list"));
         sender.sendMessage(lang.getMessage("dungeon.help.tp"));
         sender.sendMessage(lang.getMessage("dungeon.help.reload"));
+        sender.sendMessage(lang.getMessage("dungeon.help.check"));
     }
     
     /**
@@ -282,7 +401,7 @@ public class DungeonCommand implements CommandExecutor, TabCompleter {
         
         if (args.length == 1) {
             // First argument - subcommands
-            String[] subCommands = {"generate", "info", "reload", "list", "tp"};
+            String[] subCommands = {"generate", "info", "reload", "list", "tp", "check"};
             for (String subCommand : subCommands) {
                 if (subCommand.startsWith(args[0].toLowerCase())) {
                     completions.add(subCommand);

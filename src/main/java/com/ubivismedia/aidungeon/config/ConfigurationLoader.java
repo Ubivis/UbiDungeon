@@ -110,7 +110,7 @@ public class ConfigurationLoader {
         }
     }
 
-    /**
+     /**
      * Merge configurations and set as plugin's configuration
      */
     private void mergeConfigurations() {
@@ -122,11 +122,8 @@ public class ConfigurationLoader {
             configFiles.put("config", mainConfig);
         }
 
-        // Check configuration version
-        int configVersion = mainConfig.getInt("config-version", 0);
-        if (configVersion == 0) {
-            plugin.getLogger().warning("Configuration version not found. Using default settings.");
-        }
+        // Explicitly log and override configuration values
+        plugin.getLogger().info("Merging configurations...");
 
         // Process imports from main configuration
         ConfigurationSection importsSection = mainConfig.getConfigurationSection("imports");
@@ -135,8 +132,14 @@ public class ConfigurationLoader {
                 // Get the corresponding configuration file
                 FileConfiguration importedConfig = configFiles.get(key);
                 if (importedConfig != null) {
-                    // Merge the imported configuration into main config
-                    mergeConfigurations(mainConfig, importedConfig, key);
+                    // Explicitly log which configuration is being imported
+                    plugin.getLogger().info("Importing configuration for: " + key);
+
+                    // Import specific configuration sections
+                    if (key.equals("dungeon")) {
+                        // Specifically handle dungeon configuration
+                        importDungeonConfig(mainConfig, importedConfig);
+                    }
                 }
             }
         }
@@ -152,19 +155,27 @@ public class ConfigurationLoader {
     }
 
     /**
-     * Merge two configurations
+     * Explicitly import dungeon configuration
      */
-    private void mergeConfigurations(FileConfiguration main, FileConfiguration imported, String importKey) {
-        // Iterate through all keys in the imported configuration
-        for (String key : imported.getKeys(true)) {
-            // Skip section keys
-            if (imported.isConfigurationSection(key)) continue;
+    private void importDungeonConfig(FileConfiguration mainConfig, FileConfiguration dungeonConfig) {
+        // List of paths to import from dungeon configuration
+        String[] pathsToImport = {
+                "discovery.exploration-threshold",
+                "discovery.discovery-radius",
+                "discovery.enable-compass",
+                "discovery.show-on-map",
+                "discovery.hint-message"
+        };
 
-            // Construct full path in main configuration
-            String fullPath = importKey + "." + key;
-
-            // Set value in main configuration
-            main.set(fullPath, imported.get(key));
+        // Import each specified path
+        for (String path : pathsToImport) {
+            if (dungeonConfig.contains(path)) {
+                Object value = dungeonConfig.get(path);
+                plugin.getLogger().info("Importing config: " + path + " = " + value);
+                mainConfig.set(path, value);
+            } else {
+                plugin.getLogger().warning("Path not found in dungeon config: " + path);
+            }
         }
     }
 

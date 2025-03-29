@@ -7,6 +7,7 @@ import com.ubivismedia.aidungeon.config.ConfigurationLoader;
 import com.ubivismedia.aidungeon.dungeons.BiomeTracker;
 import com.ubivismedia.aidungeon.dungeons.DungeonManager;
 import com.ubivismedia.aidungeon.dungeons.BiomeExplorationTracker;
+import com.ubivismedia.aidungeon.dungeons.ExplorationChecker;
 import com.ubivismedia.aidungeon.handlers.MobHandler;
 import com.ubivismedia.aidungeon.handlers.TrapHandler;
 import com.ubivismedia.aidungeon.listeners.PlayerMoveListener;
@@ -36,6 +37,7 @@ public class AIDungeonGenerator extends JavaPlugin {
     private AIDungeonAPI api;
     private LanguageManager languageManager;
     private BossManager bossManager;
+    private ExplorationChecker explorationChecker;
 
     // Flag to prevent infinite reload loops
     private boolean isReloading = false;
@@ -71,6 +73,8 @@ public class AIDungeonGenerator extends JavaPlugin {
 
         // Initialize biome exploration tracker
         biomeExplorationTracker = new BiomeExplorationTracker();
+        this.explorationChecker = new ExplorationChecker(this, dungeonManager);
+        this.explorationChecker.startTask();
 
         // Initialize boss manager
         this.bossManager = new BossManager(this);
@@ -108,6 +112,11 @@ public class AIDungeonGenerator extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Stop the exploration checker task
+        if (explorationChecker != null) {
+            explorationChecker.stopTask();
+        }
+
         // Save any pending dungeon data
         if (dungeonStorage != null) {
             dungeonStorage.saveAllDungeons();
@@ -192,6 +201,10 @@ public class AIDungeonGenerator extends JavaPlugin {
 
     public NamespacedKey getNamespacedKey(String key) {
         return new NamespacedKey(this, key);
+    }
+
+    public ExplorationChecker getExplorationChecker() {
+        return explorationChecker;
     }
 
     /**

@@ -92,11 +92,15 @@ dungeon:
   discovered: "§6You have discovered a {0} dungeon!"
   explore_hint: "§eExplore the area to find the entrance."
 
+  check:
+    triggered: "§aManually triggered exploration check for your current location."
+
   errors:
     player_only: "§cThis command can only be used by players."
     no_permission: "§cYou don't have permission to use this command."
 
   help:
+    check: "§e/aidungeon check §f- Manually check exploration at your location"
     header: "§6=== AI Dungeon Generator Commands ==="
     generate: "§e/aidungeon generate §f- Generate a dungeon at your location"
     info: "§e/aidungeon info §f- Show information about nearby dungeons"

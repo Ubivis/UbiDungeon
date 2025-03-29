@@ -23,7 +23,9 @@ discovery:
   show-on-map: true
   discovery-radius: 100
   hint-message: true
-  exploration-threshold: 0.1  # 10% of a biome must be explored before generating a dungeon
+  exploration-threshold: 0.01  # 1% of a biome must be explored before generating a dungeon
+  periodic_check_interval: 6000  # How often to check exploration in ticks (6000 = 5 minutes)
+  periodic_check_enabled: true   # Whether to use periodic checking
 
 # Biome Theme Mappings
 biome-themes:

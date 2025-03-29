@@ -34,52 +34,38 @@ public class ConfigManager {
      * Load configuration from config.yml
      */
     public void loadConfig() {
-        // Prevent recursive loading cycles
-        if (isLoading) {
-            plugin.getLogger().warning("Prevented recursive config loading");
-            return;
+        // Clear existing data
+        themes.clear();
+        biomeThemeMap.clear();
+
+        // Load configurations
+        if (!isLoading) {
+            configLoader.loadConfigurations();
+        } else {
+            // If we're already loading, just reload individual files
+            configLoader.reloadConfigurations();
         }
 
-        try {
-            isLoading = true;
+        // Get the main configuration and dungeon configuration
+        FileConfiguration mainConfig = plugin.getConfig();
+        FileConfiguration dungeonConfig = configLoader.getConfig("dungeon");
 
-            // Clear existing data
-            themes.clear();
-            biomeThemeMap.clear();
+        // Load themes from dungeon.yml
+        ConfigurationSection themesSection = dungeonConfig.getConfigurationSection("themes");
+        if (themesSection != null) {
+            loadThemes(themesSection);
+        } else {
+            plugin.getLogger().warning("No themes section found in dungeon.yml");
+            createDefaultThemes();
+        }
 
-            // Load configurations
-            if (!isLoading) {
-                configLoader.loadConfigurations();
-            } else {
-                // If we're already loading, just reload individual files without the full process
-                configLoader.reloadConfigurations();
-            }
-
-            // First get the main configuration
-            FileConfiguration mainConfig = plugin.getConfig();
-
-            // Then get the dungeon config file, which contains theme information
-            FileConfiguration dungeonConfig = configLoader.getConfig("dungeon");
-
-            // Load themes from dungeon.yml
-            ConfigurationSection themesSection = dungeonConfig.getConfigurationSection("themes");
-            if (themesSection != null) {
-                loadThemes(themesSection);
-            } else {
-                plugin.getLogger().warning("No themes section found in dungeon.yml");
-                createDefaultThemes();
-            }
-
-            // Load biome-theme mappings from dungeon.yml
-            ConfigurationSection biomesSection = dungeonConfig.getConfigurationSection("biome-themes");
-            if (biomesSection != null) {
-                loadBiomeThemeMappings(biomesSection);
-            } else {
-                plugin.getLogger().warning("No biome-themes section found in dungeon.yml");
-                createDefaultBiomeMappings();
-            }
-        } finally {
-            isLoading = false;
+        // Load biome-theme mappings from dungeon.yml
+        ConfigurationSection biomesSection = dungeonConfig.getConfigurationSection("biome-themes");
+        if (biomesSection != null) {
+            loadBiomeThemeMappings(biomesSection);
+        } else {
+            plugin.getLogger().warning("No biome-themes section found in dungeon.yml");
+            createDefaultBiomeMappings();
         }
     }
 
@@ -296,8 +282,40 @@ public class ConfigManager {
      * Get the theme for a specific biome
      */
     public DungeonTheme getThemeForBiome(Biome biome) {
-        String themeName = biomeThemeMap.getOrDefault(biome, "RUINS");
-        return themes.getOrDefault(themeName, getDefaultTheme());
+        try {
+            // First, try to get the theme from the main configuration
+            String themeName = plugin.getConfig().getString("biome-themes." + biome.name());
+
+            // If not found in main config, try dungeon config
+            if (themeName == null) {
+                ConfigurationSection dungeonConfig = configLoader.getConfig("dungeon");
+                themeName = dungeonConfig.getString("biome-themes." + biome.name());
+            }
+
+            // If still not found, log a warning and use default
+            if (themeName == null) {
+                plugin.getLogger().warning("No theme found for biome: " + biome.name() + ". Using default.");
+                themeName = "RUINS"; // Fallback default theme
+            }
+
+            // Get theme by name
+            DungeonTheme theme = getThemeByName(themeName);
+
+            // Additional logging for debugging
+            if (theme == null) {
+                plugin.getLogger().severe("Could not find theme: " + themeName + " for biome: " + biome.name());
+                // Fallback to default theme
+                theme = getDefaultTheme();
+            }
+
+            return theme;
+        } catch (Exception e) {
+            // Log the full exception for debugging
+            plugin.getLogger().log(Level.SEVERE, "Error getting theme for biome: " + biome.name(), e);
+
+            // Return default theme in case of any error
+            return getDefaultTheme();
+        }
     }
 
     /**
@@ -388,5 +406,72 @@ public class ConfigManager {
             names.add(material.name());
         }
         return names;
+    }
+
+    /**
+     * Get biome themes from configuration with robust error handling
+     */
+    public Map<Biome, String> getBiomeThemes() {
+        Map<Biome, String> biomeThemes = new HashMap<>();
+
+        try {
+            // Try main configuration first
+            ConfigurationSection mainBiomeThemes = plugin.getConfig().getConfigurationSection("biome-themes");
+            if (mainBiomeThemes != null) {
+                for (String biomeKey : mainBiomeThemes.getKeys(false)) {
+                    try {
+                        Biome biome = Biome.valueOf(biomeKey);
+                        String theme = mainBiomeThemes.getString(biomeKey);
+                        if (theme != null) {
+                            biomeThemes.put(biome, theme);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        plugin.getLogger().warning("Invalid biome in configuration: " + biomeKey);
+                    }
+                }
+            }
+
+            // If no themes found, try dungeon configuration
+            if (biomeThemes.isEmpty()) {
+                ConfigurationSection dungeonConfig = configLoader.getConfig("dungeon");
+                ConfigurationSection dungeonBiomeThemes = dungeonConfig.getConfigurationSection("biome-themes");
+
+                if (dungeonBiomeThemes != null) {
+                    for (String biomeKey : dungeonBiomeThemes.getKeys(false)) {
+                        try {
+                            Biome biome = Biome.valueOf(biomeKey);
+                            String theme = dungeonBiomeThemes.getString(biomeKey);
+                            if (theme != null) {
+                                biomeThemes.put(biome, theme);
+                            }
+                        } catch (IllegalArgumentException e) {
+                            plugin.getLogger().warning("Invalid biome in dungeon configuration: " + biomeKey);
+                        }
+                    }
+                }
+            }
+
+            // Log themes found
+            plugin.getLogger().info("Loaded Biome Themes: " + biomeThemes);
+
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.SEVERE, "Error loading biome themes", e);
+        }
+
+        return biomeThemes;
+    }
+
+    /**
+     * Get a configuration value with priority for dungeon config
+     */
+    public double getDouble(String path, double defaultValue) {
+        // First, check dungeon configuration
+        ConfigurationSection dungeonConfig = configLoader.getConfig("dungeon");
+        if (dungeonConfig.contains(path)) {
+            return dungeonConfig.getDouble(path, defaultValue);
+        }
+
+        // If not in dungeon config, check main config
+        return plugin.getConfig().getDouble(path, defaultValue);
     }
 }
